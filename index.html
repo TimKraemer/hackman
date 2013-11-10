@@ -2,11 +2,29 @@
 <html>
 <head>
     <title></title>
+    <style type="text/css">
+        body {
+            background-color: black
+        }
+
+        #game-container {
+            width: 50%;
+            margin: 0 auto;
+            /*background-color: dimgrey;*/
+            border: 1px solid grey;
+            position: relative;
+        }
+
+        .information-up {
+            color: lightgreen;
+            text-shadow: -1px -1px 0 green, 1px -1px 0 green, -1px 1px 0 green, 1px 1px 0 green;
+        }
+    </style>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script data-main="src/main" src="libs/require.js"></script>
 </head>
 <body>
-    <span id="money" style="font-size: 50px;"></span>
-    <div id="money-log"></div>
+<div id="game-container">
+</div>
 </body>
 </html>
