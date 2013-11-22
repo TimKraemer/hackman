@@ -16,13 +16,22 @@ require.config({
 		});
 	}
 
+	// audio looop, background sound
+	myAudio = new Audio('bin/BasicSound.mp3'); 
+	myAudio.addEventListener('ended', function() {
+	    this.currentTime = 0;
+	    this.play();
+	}, false);
+	myAudio.play();
+
 	var width = 640, height = 480,
 		$container = $('#game-container').css({width: String(width) + 'px', height: String(height) + 'px'}),
 		informationCount = 0,
 		$informationField = $('<span>', {text: String(informationCount)}),
+		$soundControl = $('<span>', {append: ''}),
 		fontSize = 20,
 		$informationBar = $('<div>', {
-			append: [$informationField, $('<span>', {text: 'i'})],
+			append: [$informationField, $('<span>', {text: 'i'}), $soundControl],
 			css: {
 				'font-size': String(fontSize) + 'px',
 				color: 'white',
@@ -33,9 +42,9 @@ require.config({
 			}
 		}),
 		hackmanWidth = width / 8,
-		$hackman = imageFactory('Images/Hackbuddy.png', hackmanWidth, width / 2 - hackmanWidth / 2, .5 * height, 2),
+		$hackman = imageFactory('bin/Hackbuddy.png', hackmanWidth, width / 2 - hackmanWidth / 2, .5 * height, 2),
 		screenWidth = hackmanWidth / 1.2,
-		$screen = imageFactory('Images/Display01.png', screenWidth, width / 2 - screenWidth / 2, .38 * height, 0);
+		$screen = imageFactory('bin/Display01.png', screenWidth, width / 2 - screenWidth / 2, .38 * height, 0);
 
 	$container.append($hackman, $screen, $informationBar);
 
