@@ -14,21 +14,13 @@ require.config({
 				'z-index': zIndex
 			}
 		});
-	}
+	}	
 
-	// audio looop, background sound
-	myAudio = new Audio('bin/BasicSound.mp3'); 
-	myAudio.addEventListener('ended', function() {
-	    this.currentTime = 0;
-	    this.play();
-	}, false);
-	myAudio.play();
-
-	var width = 640, height = 480,
+	var width = 1000, height = 600,
 		$container = $('#game-container').css({width: String(width) + 'px', height: String(height) + 'px'}),
 		informationCount = 0,
 		$informationField = $('<span>', {text: String(informationCount)}),
-		$soundControl = $('<span>', {append: ''}),
+		$soundControl = $('<span class="sound">', {}), //das geht bestimmt schöner (einheitlicher)
 		fontSize = 20,
 		$informationBar = $('<div>', {
 			append: [$informationField, $('<span>', {text: 'i'}), $soundControl],
@@ -47,6 +39,22 @@ require.config({
 		$screen = imageFactory('bin/Display01.png', screenWidth, width / 2 - screenWidth / 2, .38 * height, 0);
 
 	$container.append($hackman, $screen, $informationBar);
+
+	// audio looop, background sound
+	myAudio = new Audio('bin/BasicSound.mp3'); 
+	myAudio.addEventListener('ended', function() {
+	    this.currentTime = 0;
+	    this.play();
+	}, false);
+	myAudio.play();
+	$soundControl.click(function() {
+		if (myAudio.paused == false) {
+			myAudio.pause();
+		} else {
+			myAudio.play();
+		}
+		$(this).toggleClass("muted");
+	});
 
 	require(['typist', '../libs/jquery.transit'], function(typist) {
 		typist.attach(function(keyword, value) {
