@@ -8,7 +8,6 @@
         }
 
         #game-container {
-            width: 50%;
             margin: 0 auto;
             /*background-color: dimgrey;*/
             border: 1px solid grey;
@@ -19,6 +18,18 @@
             color: lightgreen;
             text-shadow: -1px -1px 0 green, 1px -1px 0 green, -1px 1px 0 green, 1px 1px 0 green;
         }
+
+        .sound {
+            display: block;
+            float:left;
+            margin:3px 10px 0 0;
+            width:22px;
+            height:15px;
+            background: url(bin/glyphicons_182_mute.png) no-repeat left top;
+        }
+        .muted {
+            background: url(bin/glyphicons_183_volume_down.png) no-repeat left top;
+        }        
     </style>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script data-main="src/main" src="libs/require.js"></script>
