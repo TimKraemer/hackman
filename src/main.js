@@ -69,7 +69,16 @@ require.config({
 			});
 			$container.append($popup);
 			setTimeout(function() {
-				$popup.transition({y: -40}, function() {
+				var	n = Math.random() * Math.PI - .5 * Math.PI,
+					C = -50,
+					x = Math.sin(n) * C, y = Math.cos(n) * C;
+
+				if (keyword) {
+					x = 0;
+					y = C;
+				}
+
+				$popup.transition({y: y, x: x}, function() {
 					$(this).transition({opacity: 0}, function(){
 						$(this).remove();
 					});
