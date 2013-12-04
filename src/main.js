@@ -3,8 +3,9 @@ require.config({
 });
 
 (function() {
-	function imageFactory(src, width, left, top, zIndex) {
-		return $('<img>', {
+	function imageFactory(src, width, left, top, zIndex, attributes) {
+		if (!attributes) attributes = {};
+		return $('<img>', $.extend({
 			src: src,
 			css: {
 				width: String(width) + 'px',
@@ -13,7 +14,7 @@ require.config({
 				top: String(top) + 'px',
 				'z-index': zIndex
 			}
-		});
+		}, attributes));
 	}
 
 	var width = 1000, height = 600,
@@ -88,12 +89,24 @@ require.config({
 		var img = new Image();
 		img.src = hardwareLib[placedHardware[i]['type']][placedHardware[i]['level']];
 		img.onload = function() { //falls unser Spiel mal Arsch langsam wird, hier kann man was optimieren
-		  $container.append(imageFactory(img.src, img.width*.5, position[0], position[1], currentLayer++, {'data-id': i}));
+			var $hw = $('<img>', {
+				src: img.src,
+				css: {
+					width: img.width*.5 + 'px',
+					position: 'absolute',
+					left: placedHardware[i]['pos'][0] + 'px',
+					top: placedHardware[i]['pos'][1] + 'px',
+					'z-index': currentLayer++
+				}
+			});
+			$hw.click(function() {
+				alert("hi");
+			});
+			$container.append($hw);
 		}
 	}
 
 	$upgradeButton.click(function() {
-		alert("hi");
 		//if(Math.ceil(Math.random() * 2) == 1) type = "kitten";
 		//else type = "rechner";
 
