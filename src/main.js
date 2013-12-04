@@ -17,25 +17,27 @@ require.config({
 	}
 
 	var width = 1000, height = 600,
+		currentLayer = 0,
 		$container = $('#game-container').css({width: String(width) + 'px', height: String(height) + 'px'}),
 		$canvas = $container.find('canvas').attr({'width': width, 'height': height}).css({zIndex: 10, position: 'relative'}),
 		informationCount = 0,
 		$informationField = $('<span>', {text: String(informationCount)}),
-		$soundControl = $('<span class="sound">', {}), //das geht bestimmt schöner (einheitlicher)
+		$upgradeButton = $('<span>', {text: ' up'}),
+		$soundControl = $('<span>', {'class': 'sound'}),
 		fontSize = 20,
 		$informationBar = $('<div>', {
-			append: [$informationField, $('<span>', {text: 'i'}), $soundControl],
+			append: [$informationField, $('<span>', {text: 'i'}), $soundControl, $upgradeButton],
 			css: {
 				'font-size': String(fontSize) + 'px',
 				color: 'white',
 				position: 'absolute',
 				top: String(height - fontSize - 5) + 'px',
 				left: String(.9 * width) + 'px',
-				'z-index': 2
+				'z-index': 99998
 			}
 		}),
 		hackmanWidth = width / 8,
-		$hackman = imageFactory('bin/Hackbuddy.png', hackmanWidth, width / 2 - hackmanWidth / 2, .5 * height, 2),
+		$hackman = imageFactory('bin/Hackbuddy.png', hackmanWidth, width / 2 - hackmanWidth / 2, .5 * height, 99999),
 		screenWidth = hackmanWidth / 1.2,
 		$screen = imageFactory('bin/Display01.png', screenWidth, width / 2 - screenWidth / 2, .38 * height, 0);
 
@@ -55,6 +57,32 @@ require.config({
 			myAudio.pause();
 		}
 		$(this).toggleClass("muted");
+	});
+
+	var hardwareCollection = new Array();
+
+	hardwareCollection['kitten'] = 'http://placekitten.com/g/100/300';
+	hardwareCollection['rechner'] = 'bin/Rechner01.png';
+
+	function getNewHardwarePosition(Type) {
+		var position = new Array();
+
+		position['image'] = hardwareCollection[Type];
+		position['randomWidth'] = Math.ceil(Math.random() * 100) + 100;
+		position['randomHeight'] = Math.ceil(Math.random() * 200) + 200;
+		position['randomX'] = Math.ceil(Math.random() * width);
+		position['randomY'] = Math.ceil(Math.random() * height);
+
+		return position;
+	}
+
+	$upgradeButton.click(function() {
+		if(Math.ceil(Math.random() * 2) == 1) type = "kitten";
+		else type = "rechner";
+
+
+		$hardware = imageFactory(getNewHardwarePosition(type)['image'], getNewHardwarePosition()['randomWidth'], getNewHardwarePosition()['randomX'], getNewHardwarePosition()['randomY'], currentLayer++);
+		$container.append($hardware);
 	});
 
 	require(['tron'], function(Tron) {
@@ -77,7 +105,7 @@ require.config({
 					position: 'absolute',
 					left: String(offset.left + 30) + 'px',
 					top: String(offset.top) + 'px',
-					'z-index': 1
+					'z-index': 99997
 				}
 			});
 			$container.append($popup);
