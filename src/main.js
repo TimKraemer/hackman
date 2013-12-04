@@ -20,7 +20,7 @@ require.config({
 	var width = 1000, height = 600,
 		currentLayer = 0,
 		$container = $('#game-container').css({width: String(width) + 'px', height: String(height) + 'px'}),
-		$canvas = $container.find('canvas').attr({'width': width, 'height': height}).css({zIndex: 10, position: 'relative'}),
+		$canvas = $container.find('canvas').attr({'width': width, 'height': height}).css({zIndex: 10, position: 'relative'}).hide(),
 		informationCount = 0,
 		$informationField = $('<span>', {text: String(informationCount)}),
 		$upgradeButton = $('<span>', {text: ' up'}),
@@ -87,7 +87,7 @@ require.config({
 	});
 
 	require(['tron'], function(Tron) {
-//		new Tron($canvas[0]);
+//		new Tron($canvas.show()[0]);
 	});
 
 	require(['typist', '../libs/jquery.transit'], function(typist) {
