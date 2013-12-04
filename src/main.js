@@ -14,10 +14,11 @@ require.config({
 				'z-index': zIndex
 			}
 		});
-	}	
+	}
 
 	var width = 1000, height = 600,
 		$container = $('#game-container').css({width: String(width) + 'px', height: String(height) + 'px'}),
+		$canvas = $container.find('canvas').attr({'width': width, 'height': height}).css({zIndex: 10, position: 'relative'}),
 		informationCount = 0,
 		$informationField = $('<span>', {text: String(informationCount)}),
 		$soundControl = $('<span class="sound">', {}), //das geht bestimmt schöner (einheitlicher)
@@ -41,19 +42,23 @@ require.config({
 	$container.append($hackman, $screen, $informationBar);
 
 	// audio looop, background sound
-	myAudio = new Audio('bin/BasicSound.mp3'); 
+	var myAudio = new Audio('bin/BasicSound.mp3');
 	myAudio.addEventListener('ended', function() {
 	    this.currentTime = 0;
 	    this.play();
 	}, false);
 	myAudio.play();
 	$soundControl.click(function() {
-		if (myAudio.paused == false) {
-			myAudio.pause();
-		} else {
+	if (myAudio.paused) {
 			myAudio.play();
+		} else {
+			myAudio.pause();
 		}
 		$(this).toggleClass("muted");
+	});
+
+	require(['tron'], function(Tron) {
+//		new Tron($canvas[0]);
 	});
 
 	require(['typist', '../libs/jquery.transit'], function(typist) {

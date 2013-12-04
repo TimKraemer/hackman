@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editor</title>
+</head>
+<body>
+<canvas width="1000" height="600" style="border: 1px solid black"></canvas>
+</body>
+<script type="text/javascript">
+var width = 50, height = 30, level = Array.apply(null, new Array(width)).map(function() { return Array(height); }),
+    canvas = document.querySelector('canvas'),
+    ctx = canvas.getContext('2d'),
+    scale = 20;
+
+
+    draw = function() {
+        for (var x = 0; x < level.length; x++) {
+            for (var y = 0; y < level[0].length; y++) {
+                ctx.fillStyle = level[x][y] == 'furfm' ? 'black' : 'white';
+                ctx.fillRect(x * scale, y * scale, scale, scale);
+            }
+        }
+    };
+
+draw();
+canvas.addEventListener('mousedown', function(e) {
+    function scaleAndRound(n) {
+        return Math.floor(n / scale);
+    }
+    level[scaleAndRound(e.x)][scaleAndRound(e.y)] = 'furfm';
+    draw();
+//        level e.x
+});
+
+</script>
+</html>
