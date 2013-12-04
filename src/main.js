@@ -37,11 +37,9 @@ require.config({
 			}
 		}),
 		hackmanWidth = width / 8,
-		$hackman = imageFactory('bin/Hackbuddy.png', hackmanWidth, width / 2 - hackmanWidth / 2, .5 * height, 99999),
-		screenWidth = hackmanWidth / 1.2,
-		$screen = imageFactory('bin/Display01.png', screenWidth, width / 2 - screenWidth / 2, .38 * height, 0);
+		$hackman = imageFactory('bin/Hackbuddy.png', hackmanWidth, width / 2 - hackmanWidth / 2, .5 * height, 99999) 
 
-	$container.append($hackman, $screen, $informationBar);
+	$container.append($hackman, $informationBar);
 
 	// audio looop, background sound
 	var myAudio = new Audio('bin/BasicSound.mp3');
@@ -59,9 +57,54 @@ require.config({
 		$(this).toggleClass("muted");
 	});
 
-	require(['hardware'], function(Hardware) {
-//		new Tron($canvas[0]);
+
+
+
+
+
+
+
+
+
+
+
+	var hardwareLib = {
+		rechner: ['bin/Rechner01.png'],
+		display: ['bin/Display01.png','bin/Display02.png','bin/Display03.png','bin/Display04.png']
+	};
+
+
+	var placedHardware = [
+		{ type: 'display', level: 0, pos: Array(438,250) }
+	];
+
+	
+	for(i=0;i<placedHardware.length;i++) {
+		showHardware(i);
+	}
+	
+	
+	function showHardware(i) {
+		var img = new Image();
+		img.src = hardwareLib[placedHardware[i]['type']][placedHardware[i]['level']];
+		img.onload = function() { //falls unser Spiel mal Arsch langsam wird, hier kann man was optimieren
+		  $container.append(imageFactory(img.src, img.width*.5, position[0], position[1], currentLayer++, {'data-id': i}));
+		}
+	}
+
+	$upgradeButton.click(function() {
+		alert("hi");
+		//if(Math.ceil(Math.random() * 2) == 1) type = "kitten";
+		//else type = "rechner";
+
+
+		//$hardware = imageFactory(getNewHardwarePosition(type)['image'], getNewHardwarePosition()['randomWidth'], getNewHardwarePosition()['randomX'], getNewHardwarePosition()['randomY'], currentLayer++);
+		//$container.append($hardware);
 	});
+
+
+
+
 
 	require(['tron'], function(Tron) {
 //		new Tron($canvas[0]);

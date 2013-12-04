@@ -1,15 +1,19 @@
 (define(function() {
 
-var hardwareCollection = new Array();
+	var hardwareLib = new Array();
 
-	hardwareCollection['rechner'][0] = 'bin/Rechner01.png';
-	hardwareCollection['display'][0] = 'bin/Display01.png';
-	hardwareCollection['display'][1] = 'bin/Display02.png';
-	hardwareCollection['display'][2] = 'bin/Display03.png';
-	hardwareCollection['display'][3] = 'bin/Display04.png';
+	hardwareLib['rechner'][0] = 'bin/Rechner01.png';
+	hardwareLib['display'][0] = 'bin/Display01.png';
+	hardwareLib['display'][1] = 'bin/Display02.png';
+	hardwareLib['display'][2] = 'bin/Display03.png';
+	hardwareLib['display'][3] = 'bin/Display04.png';
 
 
-
+	var placedHardware = { 
+		{ type: 'display', level: 0, pos: {0,0} },
+		{ type: 'rechner', level: 0, pos: {300,300} },
+		{ type: 'display', level: 2, pos: {500,300} }
+	};
 
 		// function getNewHardwarePosition(Type) {
 		// 	var position = new Array();
@@ -33,8 +37,8 @@ var hardwareCollection = new Array();
 		//$container.append($hardware);
 	});
 
-	return function() {
-
+	return function(button) {
+		
 	};
 
 }));
