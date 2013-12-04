@@ -3,8 +3,9 @@ require.config({
 });
 
 (function() {
-	function imageFactory(src, width, left, top, zIndex) {
-		return $('<img>', {
+	function imageFactory(src, width, left, top, zIndex, attributes) {
+		if (!attributes) attributes = {};
+		return $('<img>', $.extend({
 			src: src,
 			css: {
 				width: String(width) + 'px',
@@ -13,7 +14,7 @@ require.config({
 				top: String(top) + 'px',
 				'z-index': zIndex
 			}
-		});
+		}, attributes));
 	}
 
 	var width = 1000, height = 600,
@@ -37,7 +38,7 @@ require.config({
 			}
 		}),
 		hackmanWidth = width / 8,
-		$hackman = imageFactory('bin/Hackbuddy.png', hackmanWidth, width / 2 - hackmanWidth / 2, .5 * height, 99999),
+		$hackman = imageFactory('bin/Hackbuddy.png', hackmanWidth, width / 2 - hackmanWidth / 2, .5 * height, 5),
 		screenWidth = hackmanWidth / 1.2,
 		$screen = imageFactory('bin/Display01.png', screenWidth, width / 2 - screenWidth / 2, .38 * height, 0);
 
