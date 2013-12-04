@@ -1,7 +1,8 @@
 (define(function() {
 	var keywords = [
-			'ls', 'cp', 'mv', 'rm', 'chmod',
-			'function', 'return', 'int'
+			'ls', 'cp', 'mv', 'rm', 'chmod', 'function',
+			'return', 'int', 'double', 'long', 'String', 'var',
+			'SELECT', 'FROM', 'UPDATE', 'DELETE', 'UNION'
 		],
 		discoveredWords = [],
 		maxKeywordLength = keywords.reduce(function(maxLength, keyword) {
