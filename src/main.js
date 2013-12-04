@@ -28,7 +28,7 @@ require.config({
 			css: {
 				'font-size': String(fontSize) + 'px',
 				color: 'white',
-				position: 'relative',
+				position: 'absolute',
 				top: String(height - fontSize - 5) + 'px',
 				left: String(.9 * width) + 'px',
 				'z-index': 2
