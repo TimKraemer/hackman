@@ -26,6 +26,20 @@ require.config({
 		$upgradeButton = $('<span>', {text: ' up'}),
 		$soundControl = $('<span>', {'class': 'sound'}),
 		fontSize = 20,
+		$shop = $('<div style="display:none"><h2 style="text-align:center">Shop</h2><ul style="list-style:none"><li><img src="bin/Display01.png" style="width:50%" /><p style="margin:0;margin-bottom:20px">100i</p></li><li><img src="bin/Rechner01.png" style="width:50%" /><p style="margin:0;margin-bottom:20px">500i</p></li><li><img src="bin/Server01.png" style="width:50%" /><p style="margin:0;margin-bottom:20px">2000i</p></li></ul></div>'),
+		$shopBar = $('<div>', {
+			css: {
+				position: 'absolute',
+				background: 'rgba(255,255,255,.3)',
+				top: 0,
+				right: 0,
+				width: '10px',
+				height: height,
+				'z-index': 99995
+			},
+			append: [$shop]
+		}),
+		
 		$informationBar = $('<div>', {
 			append: [$informationField, $('<span>', {text: 'i'}), $soundControl, $upgradeButton],
 			css: {
@@ -40,7 +54,13 @@ require.config({
 		hackmanWidth = width / 8,
 		$hackman = imageFactory('bin/Hackbuddy.png', hackmanWidth, width / 2 - hackmanWidth / 2, .5 * height, 99999) 
 
-	$container.append($hackman, $informationBar);
+	$container.append($hackman, $informationBar, $shopBar);
+	$shopBar.mouseover(function(){
+		$shopBar.animate({
+			width: "150px"
+	    }, 500);
+	    $shop.fadeIn();
+	});
 
 	// audio looop, background sound
 	var myAudio = new Audio('bin/BasicSound.mp3');
@@ -97,13 +117,23 @@ require.config({
 					left: placedHardware[i]['pos'][0] + 'px',
 					top: placedHardware[i]['pos'][1] + 'px',
 					'z-index': currentLayer++
-				}
+				},
+				'data-id': i
 			});
-			$hw.click(function() {
-				alert("hi");
+			$hw.click(function () {
+				upgradeHardware($(this));
 			});
 			$container.append($hw);
 		}
+	}
+
+	function upgradeHardware(hw) {
+		if(placedHardware[hw.data('id')]['level']+1 < hardwareLib[placedHardware[hw.data('id')]['type']].length) {
+			placedHardware[hw.data('id')]['level']++;
+			hw.remove();
+			showHardware(hw.data('id'));
+		}
+		else alert("max upgrade reached (level ");
 	}
 
 	$upgradeButton.click(function() {
