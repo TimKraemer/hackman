@@ -1,45 +1,142 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
-    <style type="text/css">
-        body {
-            background-color: black;
-            color:white;
-        }
+	<title></title>
+	<style type="text/css">
+		body {
+			background-color: black;
+			color: white;
+			font-family: Sans-Serif;
+		}
 
-        #game-container {
-            margin: 0 auto;
-            /*background-color: dimgrey;*/
-            border: 1px solid grey;
-            position: relative;
-        }
+		#game-container {
+			margin: 0 auto;
+			/*background-color: dimgrey;*/
+			border: 1px solid grey;
+			position: relative;
+		}
 
-        .information-up {
-            color: lightgreen;
-            text-shadow: -1px -1px 0 green, 1px -1px 0 green, -1px 1px 0 green, 1px 1px 0 green;
-        }
+		.information-up {
+			color: lightgreen;
+			text-shadow: -1px -1px 0 green, 1px -1px 0 green, -1px 1px 0 green, 1px 1px 0 green;
+		}
 
-        .sound {
-            display: block;
-            float:left;
-            margin:3px 10px 0 0;
-            width:22px;
-            height:15px;
-            background: url(bin/glyphicons_182_mute.png) no-repeat left top;
-        }
-        .muted {
-            background: url(bin/glyphicons_183_volume_down.png) no-repeat left top;
-        }
-    </style>
-    <!--<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>-->
-    <script type="text/javascript" src="libs/jquery.js"></script>
-    <script type="text/javascript" src="src/vector.js"></script>
-    <script data-main="src/main" src="libs/require.js"></script>
+		.sound {
+			display: block;
+			float: left;
+			margin: 3px 10px 0 0;
+			width: 22px;
+			height: 15px;
+			background: url(bin/glyphicons_182_mute.png) no-repeat left top;
+		}
+
+		.muted {
+			background: url(bin/glyphicons_183_volume_down.png) no-repeat left top;
+		}
+
+		.shop {
+			position: absolute;
+			background-color: rgba(255, 255, 255, .3);
+			top: 0;
+			right: 0;
+			height: 600px;
+			z-index: 99995;
+			width: 20px;
+			overflow: hidden;
+			transition: width 400ms;
+		}
+
+		.shop.open {
+			width: 150px;
+		}
+
+		.shop h2 {
+			opacity: 1;
+			transition: all 400ms;
+		}
+
+		.shop:not(.open) h2 {
+			-webkit-transform: rotate(-90deg);
+			-moz-transform: rotate(-90deg);
+			-ms-transform: rotate(-90deg);
+			-o-transform: rotate(-90deg);
+			transform: rotate(-90deg);
+
+			/* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
+			-webkit-transform-origin: 50% 50%;
+			-moz-transform-origin: 50% 50%;
+			-ms-transform-origin: 50% 50%;
+			-o-transform-origin: 50% 50%;
+			transform-origin: 50% 50%;
+
+			position: relative;
+			top: 40px;
+
+		}
+
+		.shop.open h2 {
+			position: relative;
+			top: 0px;
+		}
+
+		.shop > .content {
+			white-space: nowrap;
+			opacity: 0;
+			transition: opacity 400ms;
+		}
+
+		.shop.open > .content {
+			opacity: 1;
+		}
+
+		.shop .label {
+			opacity: 1;
+			transition: opacity 400ms;
+		}
+
+		.shop.open .label {
+			opacity: 0;
+		}
+
+		.shop a {
+			color: white;
+			text-decoration: none;
+			margin: 0 3px;
+		}
+
+		.shop a.selected {
+			font-weight: bold;
+			border-bottom: 2px solid red;
+		}
+
+		.shop .items {
+			list-style: none;
+			display: none;
+		}
+
+
+	</style>
+	<script type="text/javascript" src="libs/jquery.js"></script>
+	<script type="text/javascript" src="libs/jquery.transit.js"></script>
+	<script type="text/javascript" src="src/vector.js"></script>
+	<script data-main="src/main" src="libs/require.js"></script>
 </head>
 <body>
 <div id="game-container">
-    <canvas></canvas>
+	<div class="shop">
+		<h2 style="text-align:center">Shop</h2>
+		<div class="content">
+			<a href="#" data-for=".hardware">Hardware</a>
+			<a href="#" data-for=".software">Software</a>
+			<ul class="software items">
+			</ul>
+			<ul class="hardware items">
+				<li><img src="bin/Display01.png" style="width:50%" /><p style="margin:0;margin-bottom:20px">100i</p></li>
+				<li><img src="bin/Rechner01.png" style="width:50%" /><p style="margin:0;margin-bottom:20px">500i</p></li>
+				<li><img src="bin/Server01.png" style="width:50%" /><p style="margin:0;margin-bottom:20px">2000i</p></li>
+			</ul>
+		</div>
+	</div>
 </div>
 </body>
 </html>
