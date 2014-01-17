@@ -178,13 +178,20 @@ require.config({
 
 
 	var hardwareLib = {
+		lampe: ['bin/lampe.png'],
 		rechner: ['bin/Rechner01.png'],
-		display: ['bin/Display01.png','bin/Display02.png','bin/Display03.png','bin/Display04.png']
+		display: ['bin/Display01.png','bin/Display02.png','bin/Display03.png','bin/Display04.png'],
+		display_free: ['bin/Display03-free.png','bin/Display04-free.png'],
+		router: ['bin/box1-_1K.png','bin/box1-_2K.png','bin/box1-_3K.png','bin/box1-_4K.png','bin/box1-_5K.png'],
+		vpn: ['bin/box2-_1K.png','bin/box2-_2K.png','bin/box2-_3K.png','bin/box2-_4K.png','bin/box2-_5K.png']
 	};
 
 
 	var placedHardware = [
-		{ type: 'display', level: 0, pos: Array(438,250) }
+		//{ type: 'lampe', level: 0, pos: Array(438,1) },
+		{ type: 'display', level: 0, pos: Array(438,250) },
+		{ type: 'display', level: 3, pos: Array(250,260) },
+		{ type: 'display', level: 3, pos: Array(625,260) }
 	];
 
 
@@ -200,9 +207,9 @@ require.config({
 			var $hw = $('<img>', {
 				src: img.src,
 				css: {
-					width: img.width*.5 + 'px',
+					width: img.width*.5+(placedHardware[i]['level']*20) + 'px',
 					position: 'absolute',
-					left: placedHardware[i]['pos'][0] + 'px',
+					left: placedHardware[i]['pos'][0]-(.5*placedHardware[i]['level']*20) + 'px',
 					top: placedHardware[i]['pos'][1] + 'px',
 					'z-index': currentLayer++
 				},
