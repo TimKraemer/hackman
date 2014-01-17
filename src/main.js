@@ -143,7 +143,10 @@ require.config({
 
 		function toggleUpgrade() {
 			Object.keys(costs).forEach(function(cost) {
-				$('#'+cost).toggleClass("enabled", I >= upgradeCost(cost));
+				var $el = $('#'+cost);
+				$el.toggleClass("enabled", I >= upgradeCost(cost));
+
+				if (!$el.hasClass('enabled')) $el.attr('title', 'Es fehlen ' + Math.round(upgradeCost(cost) - I) + ' Informationen.');
 			});
 		}
 
@@ -170,7 +173,7 @@ require.config({
 		setInterval(function(){events()},tick);
 
 		$shopBar.find('ul.software').append(Object.keys(upgrades).map(function(key) {
-			return $('<li>', {id: key, html: key + ' auf Level <span id="u_'+key+'"></span>'}).click(function() {
+			return $('<li>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1) + ' <div class="upgrade-level">Level <span id="u_'+key+'"></span></div><br>'}).click(function() {
 				upgrade(key);
 			});
 		}));
