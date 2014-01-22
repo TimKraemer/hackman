@@ -156,19 +156,9 @@ $(function() {
 
 		function upgrade(obj) {
 			var cost = upgradeCost(obj);
-			if (stats.info.value >= cost) {
-				levels[obj]++;
-				stats.info.value -= cost;
-
-				Object.keys(stats).forEach(function(type) {
-					var gain = costs[obj][type] * levels[type];
-
-					if (['ram', 'cpu', 'bw'].indexOf(type) == -1) stats[type].value += gain;
-					else stats[type].value -= gain;
-				});
-
-				redrawUpgrade(obj);
-
+			if(I >= cost) {
+				upgrades[obj]++;
+				I -= cost;
 				updateGUI();
 			}
 		}
