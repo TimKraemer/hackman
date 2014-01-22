@@ -1,5 +1,4 @@
 (define(function() {
-	//TODO require vector
 	var	level = [], width = 50, height = 30,
 		FieldType = {EMPTY: 0, WALL: 1},
 

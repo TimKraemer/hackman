@@ -1,8 +1,4 @@
-require.config({
-	baseUrl: 'src/'
-});
-
-(function() {
+$(function() {
 	function imageFactory(src, width, left, top, zIndex, attributes) {
 		if (!attributes) attributes = {};
 		return $('<img>', $.extend({
@@ -19,8 +15,29 @@ require.config({
 
 	var width = 1000, height = 600,
 		currentLayer = 0,
+		stats = {
+			info: {
+				label: 'i',
+				value: 0
+			},
+			ips: {
+				label: 'IPs',
+				value: 1
+			},
+			cpu: {
+				label: 'CPU',
+				value: 1
+			},
+			bw: {
+				label: 'Bandwidth',
+				value: 16
+			},
+			aware: {
+				label: 'Awareness',
+				value: 0
+			}
+		},
 		$container = $('#game-container').css({width: String(width) + 'px', height: String(height) + 'px'}),
-		I = 0,
 		$informationField = $('<span>', {text: 0}),
 		$upgradeButton = $('<span>', {text: ' up'}),
 		$soundControl = $('<span>', {'class': 'sound'}),
@@ -54,7 +71,9 @@ require.config({
 			$shopBar.find($(this).data('for')).show('fast');
 			$shopBar.find('a').removeClass('selected');
 			$(this).addClass('selected');
-		}).find('a').first().click().end();
+		})
+		// preselect first tab
+		.find('a').first().click();
 
 	// audio looop, background sound
 	var myAudio = new Audio('bin/BasicSound.mp3');
@@ -73,13 +92,6 @@ require.config({
 	});
 
 	(function() {
-		var	IpS 	= 0
-			,RAM 	= 0
-			,CPU 	= 0
-			,BW 	= 0
-			,Aware 	= 0
-			;
-
 		var magic = 1.15;
 		var tick = 1000; //updates every $tick milliseconds
 
@@ -93,7 +105,7 @@ require.config({
 			,"neuronet": 	{base: 200000,	ips: 400.0,	ram: 16,	cpu: 12,	bw: 100,	aware: 200 	}
 		};
 
-		var upgrades = {
+		var levels = {
 			"script": 		0
 			,"program": 	0
 			,"software": 	0
@@ -103,65 +115,62 @@ require.config({
 			,"neuronet": 	0
 		}
 
-		function events() {
+		function gameLoop() {
 			// verloren?
-			if(Aware >= 100) lost();
+			if(stats.aware >= 100) lost();
 
-			// Werte hochzählen
-			calcValues();
+//			Object.keys(costs).forEach(function(type) {
+//				stats.info.value += stats.info.value * costs[type].ips;
+//			});
 
 			//GUI updaten
 			updateGUI();
 		}
 
+		function redrawUpgrade(obj) {
+			$('#u_' + obj).text(levels[obj] + ' - ' + upgradeCost(obj) + ' ' + stats.info.label);
+		}
+
 		function updateGUI() {
 			//information counter
-			$informationField.text(Math.round(I));
-			// level and costs of hardware
-			$.each(upgrades, function(key,value) {
-				$('#u_'+key).html(value+' - '+upgradeCost(key)+' I');
-			});
+			$informationField.text(Math.round(stats.info.value));
+
 			//enable/disable upgrades
 			toggleUpgrade();
 		}
 
-		function calcValues() {
-			IpS = 0;
-			RAM = 1;
-			CPU = 1;
-			BW 	= 16;
-			Aware = 0;
-			$.each( upgrades, function( key, value ) {
-				I += (value*costs[key].ips)/(1000/tick);
-				IpS += value*costs[key].ips;
-				RAM -= value*costs[key].ram;
-				CPU -= value*costs[key].cpu;
-				BW -= value*costs[key].bw;
-				Aware += value*costs[key].aware;
-			});
-		}
-
 		function toggleUpgrade() {
-			Object.keys(costs).forEach(function(cost) {
-				var $el = $('#'+cost);
-				$el.toggleClass("enabled", I >= upgradeCost(cost));
+			Object.keys(costs).forEach(function(type) {
+				var cost = upgradeCost(type),
+					isBuyable = stats.info.value >= cost,
+					$el = $('#'+type);
 
-				if (!$el.hasClass('enabled')) $el.attr('title', 'Es fehlen ' + Math.round(upgradeCost(cost) - I) + ' Informationen.');
+				$el.toggleClass('enabled', isBuyable);
+				$el.attr('title', isBuyable ? '' : 'Es fehlen ' + Math.round(cost - stats.info.value) + ' ' + stats.info.label + '.');
 			});
 		}
 
 		function upgradeCost(obj) {
-			return Math.ceil(costs[obj].base*(Math.pow(magic,upgrades[obj])));
+			return Math.ceil(costs[obj].base*(Math.pow(magic,levels[obj])));
 		}
 
 		function upgrade(obj) {
 			var cost = upgradeCost(obj);
-			if(I >= cost) {
-				upgrades[obj]++;
-				I -= cost;
+			if (stats.info.value >= cost) {
+				levels[obj]++;
+				stats.info.value -= cost;
+
+				Object.keys(stats).forEach(function(type) {
+					var gain = costs[obj][type] * levels[type];
+
+					if (['ram', 'cpu', 'bw'].indexOf(type) == -1) stats[type].value += gain;
+					else stats[type].value -= gain;
+				});
+
+				redrawUpgrade(obj);
+
 				updateGUI();
 			}
-			else console.log('upgrade nicht möglich, zu wenig I ('+cost+' benötigt, '+I+' vorhanden)');
 		}
 
 		function lost() {
@@ -169,14 +178,17 @@ require.config({
 			return true;
 		}
 
+		setInterval(gameLoop, tick);
 
-		setInterval(function(){events()},tick);
-
-		$shopBar.find('ul.software').append(Object.keys(upgrades).map(function(key) {
-			return $('<li>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1) + ' <div class="upgrade-level">Level <span id="u_'+key+'"></span></div><br>'}).click(function() {
+		$shopBar.find('ul.software').append(Object.keys(levels).map(function(key) {
+			return $('<li>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1) + ' <div class="upgrade-level">Level <span id="u_'+key+'">0</span></div><br>'}).click(function() {
 				upgrade(key);
 			});
 		}));
+		Object.keys(levels).forEach(function(type) {
+			redrawUpgrade(type);
+		});
+
 	})();
 
 
@@ -187,11 +199,11 @@ require.config({
 
 
 	var placedHardware = [
-		{ type: 'display', level: 0, pos: Array(438,250) }
+		{ type: 'display', level: 0, pos: [438, 250] }
 	];
 
 
-	for(i=0;i<placedHardware.length;i++) {
+	for(var i = 0; i < placedHardware.length; i++) {
 		showHardware(i);
 	}
 
@@ -236,15 +248,43 @@ require.config({
 		//$container.append($hardware);
 	});
 
+	(function() {
+		var keywords = [
+				'ls', 'cp', 'mv', 'rm', 'chmod', 'function',
+				'return', 'int', 'double', 'long', 'String', 'var',
+				'SELECT', 'FROM', 'UPDATE', 'DELETE', 'UNION'
+			],
+			discoveredWords = [],
+			maxKeywordLength = keywords.reduce(function(maxLength, keyword) {
+				return Math.max(maxLength, keyword.length);
+			}, 0),
+			typedStack = [],
+			keyAlreadyDown = true;
 
+		document.onkeydown = function(e) {
+			e = e || window.event;
+			var charCode = e.which || e.keyCode,
+				charTyped = String.fromCharCode(charCode),
+				value = 1;
 
+			typedStack.unshift(charTyped);
+			typedStack.splice(maxKeywordLength);
 
+			var	stackWord = typedStack.slice().reverse().join(''),
+				keyword = keywords.filter(function(keyword) {
+					return stackWord.toLowerCase().indexOf(keyword.toLowerCase()) != -1;
+				})[0];
 
+			if (keyword) {
+				typedStack = [];
+				value = keyword.length * (discoveredWords.indexOf(keyword) == -1 ? 10 : 5);
+			}
 
-require(['typist', '../libs/jquery.transit'], function(typist) {
-		typist.attach(function(keyword, value) {
-			I += value;
-			$informationField.text(I);
+			if (keyAlreadyDown && !keyword) return;
+			keyAlreadyDown = true;
+
+			stats.info.value += value;
+			$informationField.text(Math.round(stats.info.value));
 			var offset = $hackman.position(),
 				text = '+' + String(value);
 
@@ -255,7 +295,7 @@ require(['typist', '../libs/jquery.transit'], function(typist) {
 				'class': 'information-up',
 				css: {
 					position: 'absolute',
-					left: String(offset.left + 30) + 'px',
+					left: String(offset.left + 50) + 'px',
 					top: String(offset.top) + 'px',
 					'z-index': 99997
 				}
@@ -263,7 +303,7 @@ require(['typist', '../libs/jquery.transit'], function(typist) {
 			$container.append($popup);
 			setTimeout(function() {
 				var	n = Math.random() * Math.PI - .5 * Math.PI,
-					C = -50,
+					C = -1 * (100 + Math.random() * 200),
 					x = Math.sin(n) * C, y = Math.cos(n) * C;
 
 				if (keyword) {
@@ -277,7 +317,14 @@ require(['typist', '../libs/jquery.transit'], function(typist) {
 					});
 				});
 			}, 50);
-		});
-	});
 
-})();
+			discoveredWords.push(keyword);
+		};
+
+		document.onkeyup = function() {
+			keyAlreadyDown = false;
+		}
+	})();
+
+
+});
