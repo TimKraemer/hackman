@@ -13,15 +13,14 @@ $(function() {
 		}, attributes));
 	}
 
-	var width = 1000, height = 600,
-		currentLayer = 0,
+	var currentLayer = 0,
 		stats = {
 			info: {
 				label: 'i',
 				value: 0
 			},
 			ips: {
-				label: 'IPs',
+				label: 'i/Sec',
 				value: 1
 			},
 			cpu: {
@@ -49,8 +48,8 @@ $(function() {
 				'font-size': String(fontSize) + 'px',
 				color: 'white',
 				position: 'absolute',
-				top: String(height - fontSize - 5) + 'px',
-				left: String(.9 * width) + 'px',
+				top: String(window.innerHeight - fontSize - 5) + 'px',
+				left: String(.9 * window.innerWidth) + 'px',
 				'z-index': 99998
 			}
 		})
@@ -117,9 +116,14 @@ $(function() {
 			// verloren?
 			if(stats.aware >= 100) lost();
 
-//			Object.keys(costs).forEach(function(type) {
-//				stats.info.value += stats.info.value * costs[type].ips;
-//			});
+	        $.each( levels, function( key, value ) {
+	                stats.info.value += (value*costs[key].ips)/(1000/tick);
+	                stats.ips.value += value*costs[key].ips;
+	                stats.ram.value -= value*costs[key].ram;
+	                stats.cpu.value -= value*costs[key].cpu;
+	                stats.bw.value -= value*costs[key].bw;
+	                stats.aware.value += value*costs[key].aware;
+	        });
 
 			//GUI updaten
 			updateGUI();
@@ -131,6 +135,7 @@ $(function() {
 
 		function updateGUI() {
 			//information counter
+			console.log(stats.info);
 			$informationField.text(Math.round(stats.info.value));
 
 			//enable/disable upgrades
@@ -191,8 +196,10 @@ $(function() {
 
 	var hardwareLib = {
 		hackman: ['bin/Hackbuddy.png'],
-		lampe: ['bin/lampe.png'],
-		rechner: ['bin/Rechner01.png'],
+		lamp: ['bin/lampe.png'],
+		noise: ['bin/rauschen01.gif','bin/rauschen02.gif','bin/rauschen03.gif','bin/rauschen04.gif'],
+		lamp_noise: ['bin/lamp-noise.gif'],
+		pc: ['bin/Rechner01.png'],
 		display: ['bin/Display01.png','bin/Display02.png','bin/Display03.png','bin/Display04.png'],
 		display_free: ['bin/Display03-free.png','bin/Display04-free.png'],
 		router: ['bin/router1.png','bin/router2.png','bin/router3.png','bin/router4.png','bin/router5.png'],
@@ -203,21 +210,21 @@ $(function() {
 
 	var placedHardware = [
 		{ type: 'hackman', level: 0, pos: [0,100] },
-		{ type: 'lampe', level: 0, pos: [0,-650] },
+		{ type: 'lamp', level: 0, pos: [0,-650] },
 		{ type: 'display', level: 0, pos: [0,-50] },
-		{ type: 'display', level: 3, pos: [-380,-50] },
-		{ type: 'display', level: 3, pos: [380,-50] },
-		{ type: 'display_free', level: 1, pos: [-190,-250] },
-		{ type: 'display_free', level: 1, pos: [190,-250] },
-		{ type: 'display_free', level: 1, pos: [-570,-250] },
-		{ type: 'display_free', level: 1, pos: [570,-250] },
-		{ type: 'display_free', level: 1, pos: [-380,-450] },
-		{ type: 'display_free', level: 1, pos: [570,-450] },
+		{ type: 'display_free', level: 1, pos: [-380,-70] },
+		{ type: 'display_free', level: 1, pos: [380,-70] },
+		{ type: 'display_free', level: 1, pos: [-190,-270] },
+		{ type: 'display_free', level: 1, pos: [190,-270] },
+		{ type: 'display_free', level: 1, pos: [-570,-270] },
+		{ type: 'display_free', level: 1, pos: [570,-270] },
+		{ type: 'display_free', level: 1, pos: [-380,-470] },
+		{ type: 'display_free', level: 1, pos: [570,-470] },
 		{ type: 'server', level: 1, pos: [-870,-50] },
 		{ type: 'server', level: 1, pos: [-1070,-50] },
-		{ type: 'rechner', level: 0, pos: [-690,155] },
-		{ type: 'rechner', level: 0, pos: [690,155] },
-		{ type: 'rechner', level: 0, pos: [850,155] },
+		{ type: 'pc', level: 0, pos: [-690,155] },
+		{ type: 'pc', level: 0, pos: [690,155] },
+		{ type: 'pc', level: 0, pos: [850,155] },
 		{ type: 'router', level: 4, pos: [-800,450] },
 		{ type: 'vpn', level: 4, pos: [550,380] },
 		{ type: 'vpn', level: 4, pos: [-1000,450] }
@@ -232,13 +239,47 @@ $(function() {
 
 	function showHardware(i) {
 		var scale = window.innerHeight/1550;
-		var h_mid = window.innerWidth/2; //TODO: auf Container Größe zugreifen
-		var v_mid = window.innerHeight/2; //TODO: auf Container Größe zugreifen 
+		var h_mid = window.innerWidth/2; 
+		var v_mid = window.innerHeight/2;
+		var zindex = 0;
 		var img = new Image();
 		img.src = hardwareLib[placedHardware[i]['type']][placedHardware[i]['level']];
 		img.onload = function() { //falls unser Spiel mal Arsch langsam wird, hier kann man was optimieren
-			if(placedHardware[i]['type'] == 'hackman' ) var zindex = 99999;
+			if(placedHardware[i]['type'] == 'hackman' ) zindex = 99999;
+			else if(['display', 'display_free', 'lamp-noise'].indexOf(placedHardware[i]['type']) != -1 ) zindex = currentLayer+=2;
 			else zindex = currentLayer++;
+			
+			if(placedHardware[i]['type'] == 'lamp' ) {
+				var $noise = $('<img>', {
+					src: hardwareLib['lamp_noise'][0],
+					css: {	
+						width: 48*scale+ 'px',
+						position: 'absolute',
+						left: h_mid+placedHardware[i]['pos'][0]*scale-46+img.width*scale/2 + 'px',
+						top: v_mid+placedHardware[i]['pos'][1]*scale-37+img.height*scale/2 + 'px',
+						'z-index': zindex-1
+					},
+					'class': 'noise'
+				});
+				$container.append($noise);
+			}
+
+			if(['display', 'display_free'].indexOf(placedHardware[i]['type']) != -1 ) {
+				var $noise = $('<img>', {
+					src: hardwareLib['noise'][rand(0,3)],
+					css: {	
+						width: img.width*scale+ 'px',
+						position: 'absolute',
+						left: h_mid+placedHardware[i]['pos'][0]*scale-img.width*scale/2 + 'px',
+						top: v_mid+placedHardware[i]['pos'][1]*scale-img.height*scale/2 + 'px',
+						'z-index': zindex-1
+					},
+					'class': 'noise'
+				});
+				$container.append($noise);
+			}
+
+
 			var $hw = $('<img>', {
 				src: img.src,
 				css: {	
@@ -266,17 +307,12 @@ $(function() {
 			hw.remove();
 			showHardware(hw.data('id'));
 		}
-		else alert("max upgrade reached (level ");
+		else alert(placedHardware[hw.data('id')]['type']+"max upgrade reached (Level "+placedHardware[hw.data('id')]['level']+")");
 	}
 
-	$upgradeButton.click(function() {
-		//if(Math.ceil(Math.random() * 2) == 1) type = "kitten";
-		//else type = "rechner";
-
-
-		//$hardware = imageFactory(getNewHardwarePosition(type)['image'], getNewHardwarePosition()['randomWidth'], getNewHardwarePosition()['randomX'], getNewHardwarePosition()['randomY'], currentLayer++);
-		//$container.append($hardware);
-	});
+	function rand (min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
 
 	(function() {
 		var keywords = [
