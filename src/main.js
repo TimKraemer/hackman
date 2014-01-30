@@ -78,12 +78,12 @@ $(function() {
 	// audio looop, background sound
 	var myAudio = new Audio('bin/BasicSound.mp3');
 	myAudio.addEventListener('ended', function() {
-	    this.currentTime = 0;
-	    this.play();
+		this.currentTime = 0;
+		this.play();
 	}, false);
 //	myAudio.play();
 	$soundControl.click(function() {
-	if (myAudio.paused) {
+		if (myAudio.paused) {
 			myAudio.play();
 		} else {
 			myAudio.pause();
@@ -156,10 +156,19 @@ $(function() {
 
 		function upgrade(obj) {
 			var cost = upgradeCost(obj);
-			if(I >= cost) {
-				upgrades[obj]++;
-				I -= cost;
-				updateGUI();
+			if (stats.info.value >= cost) {
+				levels[obj]++;
+				stats.info.value -= cost;
+
+				Object.keys(stats).forEach(function(type) {
+					var gain = costs[obj][type] * levels[obj];
+
+					if (gain == undefined) return;
+					if (['ram', 'cpu', 'bw'].indexOf(type) == -1) stats[type].value += gain;
+					else stats[type].value -= gain;
+				});
+
+				redrawUpgrade(obj);
 			}
 		}
 
@@ -183,13 +192,20 @@ $(function() {
 
 
 	var hardwareLib = {
+		lampe: ['bin/lampe.png'],
 		rechner: ['bin/Rechner01.png'],
-		display: ['bin/Display01.png','bin/Display02.png','bin/Display03.png','bin/Display04.png']
+		display: ['bin/Display01.png','bin/Display02.png','bin/Display03.png','bin/Display04.png'],
+		display_free: ['bin/Display03-free.png','bin/Display04-free.png'],
+		router: ['bin/box1-_1K.png','bin/box1-_2K.png','bin/box1-_3K.png','bin/box1-_4K.png','bin/box1-_5K.png'],
+		vpn: ['bin/box2-_1K.png','bin/box2-_2K.png','bin/box2-_3K.png','bin/box2-_4K.png','bin/box2-_5K.png']
 	};
 
 
 	var placedHardware = [
-		{ type: 'display', level: 0, pos: [438, 250] }
+		//{ type: 'lampe', level: 0, pos: Array(438,1) },
+		{ type: 'display', level: 0, pos: [438,250] },
+		{ type: 'display', level: 3, pos: [250,260] },
+		{ type: 'display', level: 3, pos: [625,260] }
 	];
 
 
