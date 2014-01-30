@@ -37,7 +37,7 @@ $(function() {
 				value: 0
 			}
 		},
-		$container = $('#game-container').css({width: String(width) + 'px', height: String(height) + 'px'}),
+		$container = $('#game-container').css({width: window.innerWidth + 'px', height: window.innerHeight + 'px'}),
 		$informationField = $('<span>', {text: 0}),
 		$upgradeButton = $('<span>', {text: ' up'}),
 		$soundControl = $('<span>', {'class': 'sound'}),
@@ -53,11 +53,9 @@ $(function() {
 				left: String(.9 * width) + 'px',
 				'z-index': 99998
 			}
-		}),
-		hackmanWidth = width / 8,
-		$hackman = imageFactory('bin/Hackbuddy.png', hackmanWidth, width / 2 - hackmanWidth / 2, .5 * height, 99999)
+		})
 
-	$container.append($hackman, $informationBar, $shopBar);
+	$container.append($informationBar, $shopBar);
 	$shopBar
 		.mouseenter(function() {
 			$shopBar.addClass('open');
@@ -192,20 +190,38 @@ $(function() {
 
 
 	var hardwareLib = {
+		hackman: ['bin/Hackbuddy.png'],
 		lampe: ['bin/lampe.png'],
 		rechner: ['bin/Rechner01.png'],
 		display: ['bin/Display01.png','bin/Display02.png','bin/Display03.png','bin/Display04.png'],
 		display_free: ['bin/Display03-free.png','bin/Display04-free.png'],
-		router: ['bin/box1-_1K.png','bin/box1-_2K.png','bin/box1-_3K.png','bin/box1-_4K.png','bin/box1-_5K.png'],
-		vpn: ['bin/box2-_1K.png','bin/box2-_2K.png','bin/box2-_3K.png','bin/box2-_4K.png','bin/box2-_5K.png']
+		router: ['bin/router1.png','bin/router2.png','bin/router3.png','bin/router4.png','bin/router5.png'],
+		vpn: ['bin/vpn1.png','bin/vpn2.png','bin/vpn3.png','bin/vpn4.png','bin/vpn5.png'],
+		server: ['bin/Server01.png', 'bin/Server02.png']
 	};
 
 
 	var placedHardware = [
-		//{ type: 'lampe', level: 0, pos: Array(438,1) },
-		{ type: 'display', level: 0, pos: [438,250] },
-		{ type: 'display', level: 3, pos: [250,260] },
-		{ type: 'display', level: 3, pos: [625,260] }
+		{ type: 'hackman', level: 0, pos: [0,100] },
+		{ type: 'lampe', level: 0, pos: [0,-650] },
+		{ type: 'display', level: 0, pos: [0,-50] },
+		{ type: 'display', level: 3, pos: [-380,-50] },
+		{ type: 'display', level: 3, pos: [380,-50] },
+		{ type: 'display_free', level: 1, pos: [-190,-250] },
+		{ type: 'display_free', level: 1, pos: [190,-250] },
+		{ type: 'display_free', level: 1, pos: [-570,-250] },
+		{ type: 'display_free', level: 1, pos: [570,-250] },
+		{ type: 'display_free', level: 1, pos: [-380,-450] },
+		{ type: 'display_free', level: 1, pos: [570,-450] },
+		{ type: 'server', level: 1, pos: [-870,-50] },
+		{ type: 'server', level: 1, pos: [-1070,-50] },
+		{ type: 'rechner', level: 0, pos: [-690,155] },
+		{ type: 'rechner', level: 0, pos: [690,155] },
+		{ type: 'rechner', level: 0, pos: [850,155] },
+		{ type: 'router', level: 4, pos: [-800,450] },
+		{ type: 'vpn', level: 4, pos: [550,380] },
+		{ type: 'vpn', level: 4, pos: [-1000,450] }
+
 	];
 
 
@@ -215,23 +231,31 @@ $(function() {
 
 
 	function showHardware(i) {
+		var scale = window.innerHeight/1550;
+		var h_mid = window.innerWidth/2; //TODO: auf Container Größe zugreifen
+		var v_mid = window.innerHeight/2; //TODO: auf Container Größe zugreifen 
 		var img = new Image();
 		img.src = hardwareLib[placedHardware[i]['type']][placedHardware[i]['level']];
 		img.onload = function() { //falls unser Spiel mal Arsch langsam wird, hier kann man was optimieren
+			if(placedHardware[i]['type'] == 'hackman' ) var zindex = 99999;
+			else zindex = currentLayer++;
 			var $hw = $('<img>', {
 				src: img.src,
-				css: {
-					width: img.width*.5 + 'px',
+				css: {	
+					width: img.width*scale+ 'px',
 					position: 'absolute',
-					left: placedHardware[i]['pos'][0] + 'px',
-					top: placedHardware[i]['pos'][1] + 'px',
-					'z-index': currentLayer++
+					left: h_mid+placedHardware[i]['pos'][0]*scale-img.width*scale/2 + 'px',
+					top: v_mid+placedHardware[i]['pos'][1]*scale-img.height*scale/2 + 'px',
+					'z-index': zindex
 				},
+				'class': placedHardware[i]['type'],
 				'data-id': i
 			});
-			$hw.click(function () {
-				upgradeHardware($(this));
-			});
+			if(placedHardware[i]['type'] != 'hackman' ) {
+				$hw.click(function () {
+					upgradeHardware($(this));
+				});
+			}
 			$container.append($hw);
 		}
 	}
@@ -291,7 +315,7 @@ $(function() {
 
 			stats.info.value += value;
 			$informationField.text(Math.round(stats.info.value));
-			var offset = $hackman.position(),
+			var offset = $('.hackman').position(),
 				text = '+' + String(value);
 
 			if (keyword) text += ' - ' + keyword;
