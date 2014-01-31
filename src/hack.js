@@ -14,20 +14,18 @@
 
 			nodes = [],
 
-			prevTime = 0,
-
 			isPathable = function(path) {
 				return path.nodeA == player || path.nodeB == player ||
 					path.nodeA.hacked || path.nodeB.hacked;
 			},
 			isPathed = function(path) {
-				return (path.nodeA == player || path.nodeB == player) &&
-					(path.nodeA.hacked || path.nodeB.hacked);
+				return (path.nodeA == player || path.nodeA.hacked) &&
+					(path.nodeB == player || path.nodeB.hacked);
 			},
 
 			initLevel = function() {
 				var isHackable = function(node) {
-					return paths.some(function(path) {
+					return !node.hacked && !node.hacking && paths.some(function(path) {
 						return path.nodeA == node && (path.nodeB == player || path.nodeB.hacked) ||
 							path.nodeB == node && (path.nodeA == player || path.nodeA.hacked);
 					});
@@ -85,7 +83,7 @@
 							}
 							var watue = node.hackingTime / node.model.time;
 							node.hackOverlay.graphics.clear()
-								.beginFill('lightblue').beginStroke('darkgrey').arc(0, 0, watue * (scale / 2), 0, 6);
+								.beginFill('#2B547E').beginStroke('darkgrey').arc(0, 0, watue * (scale / 2), 0, 6);
 						}
 					});
 
@@ -126,11 +124,12 @@
 			redrawPaths = function() {
 				paths.forEach(function(path) {
 					path.graphics.clear().setStrokeStyle(3);
-					if (isPathable(path) && (path.nodeA == node || path.nodeB == node)) {
+					if (isPathed(path) || (isPathable(path) && (path.nodeA.hacking || path.nodeB.hacking))) {
 						path.graphics.beginStroke('blue');
+					} else if (isPathable(path)) {
+						path.graphics.beginStroke('lightgreen');
 					} else {
-						var color = isPathed(path) ? 'blue' : isPathable(path) ? 'lightgreen' : 'darkgrey';
-						path.graphics.beginStroke(color);
+						path.graphics.beginStroke('grey');
 					}
 					path.graphics.moveTo(path.nodeA.x, path.nodeA.y).lineTo(path.nodeB.x, path.nodeB.y);
 				});
