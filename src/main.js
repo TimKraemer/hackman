@@ -27,6 +27,10 @@ $(function() {
 				label: 'CPU',
 				value: 1
 			},
+			ram: {
+				label: 'RAM',
+				value: 4
+			},
 			bw: {
 				label: 'Bandwidth',
 				value: 16
@@ -135,7 +139,6 @@ $(function() {
 
 		function updateGUI() {
 			//information counter
-			console.log(stats.info);
 			$informationField.text(Math.round(stats.info.value));
 
 			//enable/disable upgrades
