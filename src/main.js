@@ -215,7 +215,7 @@ $(function() {
 	var placedHardware = [
 		{ type: 'hackman', level: 0, pos: [0,100] },
 		{ type: 'lamp', level: 0, pos: [0,-650] },
-		{ type: 'display', level: 0, pos: [0,-50] },
+		{ type: 'display', level: 3, pos: [0,-50] },
 		{ type: 'display_free', level: 1, pos: [-380,-70] },
 		{ type: 'display_free', level: 1, pos: [380,-70] },
 		{ type: 'display_free', level: 1, pos: [-190,-270] },
@@ -230,8 +230,8 @@ $(function() {
 		{ type: 'pc', level: 0, pos: [690,155] },
 		{ type: 'pc', level: 0, pos: [850,155] },
 		{ type: 'router', level: 4, pos: [-800,450] },
-		{ type: 'vpn', level: 4, pos: [550,380] },
-		{ type: 'vpn', level: 4, pos: [-1000,450] }
+		{ type: 'vpn', level: 4, pos: [550,380] }
+		//{ type: 'vpn', level: 4, pos: [-1000,450] }
 
 	];
 
