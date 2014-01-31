@@ -121,6 +121,7 @@ $(function() {
 			if(stats.aware >= 100) lost();
 
 	        $.each( levels, function( key, value ) {
+	        		//console.log(value*costs[key].ips)/(1000/tick);
 	                stats.info.value += (value*costs[key].ips)/(1000/tick);
 	                stats.ips.value += value*costs[key].ips;
 	                stats.ram.value -= value*costs[key].ram;
@@ -258,8 +259,8 @@ $(function() {
 					css: {	
 						width: 48*scale+ 'px',
 						position: 'absolute',
-						left: h_mid+placedHardware[i]['pos'][0]*scale-46+img.width*scale/2 + 'px',
-						top: v_mid+placedHardware[i]['pos'][1]*scale-37+img.height*scale/2 + 'px',
+						left: h_mid+placedHardware[i]['pos'][0]*scale-74*scale+img.width*scale/2 + 'px',
+						top: v_mid+placedHardware[i]['pos'][1]*scale-60*scale+img.height*scale/2 + 'px',
 						'z-index': zindex-1
 					},
 					'class': 'noise'
