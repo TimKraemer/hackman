@@ -169,7 +169,7 @@ $(function() {
 				Object.keys(stats).forEach(function(type) {
 					var gain = costs[obj][type] * levels[obj];
 
-					if (gain == undefined) return;
+					if (!gain) return;
 					if (['ram', 'cpu', 'bw'].indexOf(type) == -1) stats[type].value += gain;
 					else stats[type].value -= gain;
 				});
