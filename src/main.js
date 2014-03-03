@@ -402,7 +402,7 @@ $(function() {
 
 			stats.info.value += value;
 			$informationField.text(Math.round(stats.info.value));
-			var offset = $('.hackman').position(),
+			var offset = $('._hackman').position(),
 				text = '+' + String(value);
 
 			if (keyword) text += ' - ' + keyword;
