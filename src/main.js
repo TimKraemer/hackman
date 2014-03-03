@@ -200,6 +200,9 @@ $(function() {
 
 
 	var hardwareLib = {
+		auge: ['bin/auge1.png','bin/auge2.png','bin/auge3.png','bin/auge4.png','bin/auge5.png','bin/auge6.png','bin/auge7.png','bin/auge8.png'],
+		shop: ['bin/infocoin.png'], //todo das passt hier nicht rein
+		news: ['bin/idaily.png'], //auch weg
 		hackman: ['bin/Hackbuddy.png'],
 		lamp: ['bin/lampe.png'],
 		noise: ['bin/rauschen01.gif','bin/rauschen02.gif','bin/rauschen03.gif','bin/rauschen04.gif'],
@@ -230,9 +233,12 @@ $(function() {
 		{ type: 'pc', level: 0, pos: [-690,155] },
 		{ type: 'pc', level: 0, pos: [690,155] },
 		{ type: 'pc', level: 0, pos: [850,155] },
-		{ type: 'router', level: 4, pos: [-800,450] },
+		{ type: 'router', level: 0, pos: [-800,450] },
 		{ type: 'vpn', level: 4, pos: [550,380] },
-		{ type: 'vpn', level: 4, pos: [-1000,450] }
+		{ type: 'auge', level: 0, pos: [570,-470] },
+		//{ type: 'shop', level: 0, pos: [-380,-470] },
+		{ type: 'news', level: 0, pos: [380,-70] }
+		//{ type: 'vpn', level: 4, pos: [-1000,450] }
 
 	];
 
