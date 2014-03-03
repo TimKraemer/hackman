@@ -23,18 +23,6 @@ $(function() {
 				label: 'i/Sec',
 				value: 1
 			},
-			cpu: {
-				label: 'CPU',
-				value: 1
-			},
-			ram: {
-				label: 'RAM',
-				value: 4
-			},
-			bw: {
-				label: 'Bandwidth',
-				value: 16
-			},
 			aware: {
 				label: 'Awareness',
 				value: 0
@@ -83,7 +71,7 @@ $(function() {
 		this.currentTime = 0;
 		this.play();
 	}, false);
-//	myAudio.play();
+	//	myAudio.play();
 	$soundControl.click(function() {
 		if (myAudio.paused) {
 			myAudio.play();
@@ -94,19 +82,21 @@ $(function() {
 	});
 
 	(function() {
-		var magic = 1.15;
+		var magic = 1.15; // Faktor um den sich die Kosten bei jedem Upgrade erhöhen -> Balance this first!
 		var tick = 1000; //updates every $tick milliseconds
 
+		//Software Kosten
 		var costs = {
-			"script": 		{base: 15, 		ips: 0.1,	ram: 0.1,	cpu: 0.1,	bw: 0,		aware: 0 	}
-			,"program": 	{base: 100, 	ips: 0.5,	ram: 0.2,	cpu: 0.5,	bw: 0,		aware: 0 	}
-			,"software": 	{base: 500, 	ips: 4.0,	ram: 0.5,	cpu: 2.4,	bw: 1,		aware: 0 	}
-			,"bruteforce": 	{base: 3000, 	ips: 10.0,	ram: 1,		cpu: 4,		bw: 6,		aware: 3 	}
-			,"keylog": 		{base: 10000, 	ips: 40.0,	ram: 0,		cpu: 0.1,	bw: 1,		aware: 10 	}
-			,"botnet": 		{base: 40000, 	ips: 100.0,	ram: 0.5,	cpu: 1,		bw: 16,		aware: 40 	}
-			,"neuronet": 	{base: 200000,	ips: 400.0,	ram: 16,	cpu: 12,	bw: 100,	aware: 200 	}
+			"script": 		{base: 15, 		ips: 0.1,	aware: 0 	}
+			,"program": 	{base: 100, 	ips: 0.5,	aware: 0 	}
+			,"software": 	{base: 500, 	ips: 4.0,	aware: 0 	}
+			,"bruteforce": 	{base: 3000, 	ips: 10.0,	aware: 3 	}
+			,"keylog": 		{base: 10000, 	ips: 40.0,	aware: 10 	}
+			,"botnet": 		{base: 40000, 	ips: 100.0,	aware: 40 	}
+			,"neuronet": 	{base: 200000,	ips: 400.0,	aware: 200 	}
 		};
 
+		// current level of upgrades per software
 		var levels = {
 			"script": 		0
 			,"program": 	0
@@ -117,6 +107,7 @@ $(function() {
 			,"neuronet": 	0
 		}
 
+		// here are hardware items we got
 		var hardwareLib = {
 			_auge: ['bin/auge1.png','bin/auge2.png','bin/auge3.png','bin/auge4.png','bin/auge5.png','bin/auge6.png','bin/auge7.png','bin/auge8.png'], //not placeable
 			_shop: ['bin/infocoin.png'], //not placeable
@@ -130,7 +121,41 @@ $(function() {
 			router: ['bin/router1.png','bin/router2.png','bin/router3.png','bin/router4.png','bin/router5.png'],
 			vpn: ['bin/vpn1.png','bin/vpn2.png','bin/vpn3.png','bin/vpn4.png','bin/vpn5.png'],
 			server: ['bin/Server01.png', 'bin/Server02.png']
-		};		
+		};
+
+		//this is the chosen final layout, made by Joan
+		var layout = [
+			{ type: 'display', level: 2, pos: [380,-70] }, // iDaily
+			{ type: 'display', level: 2, pos: [-380,-70] },
+			{ type: 'display', level: 2, pos: [-190,-270] },
+			{ type: 'display', level: 2, pos: [190,-270] },
+			{ type: 'display', level: 2, pos: [-570,-270] },
+			{ type: 'display', level: 2, pos: [570,-270] },
+			{ type: 'display', level: 2, pos: [-380,-470] },
+			{ type: 'display', level: 2, pos: [570,-470] },
+			{ type: 'server', level: 0, pos: [-870,-50] },
+			{ type: 'server', level: 0, pos: [-1070,-50] },
+			{ type: 'pc', level: 0, pos: [-690,155] },
+			{ type: 'pc', level: 0, pos: [690,155] },
+			{ type: 'pc', level: 0, pos: [850,155] },
+			{ type: 'router', level: 0, pos: [-800,450] },
+			{ type: 'vpn', level: 0, pos: [550,380] },
+			{ type: '_auge', level: 0, pos: [570,-470] },
+			//{ type: '_shop', level: 0, pos: [-380,-470] },
+			{ type: '_news', level: 0, pos: [380,-70] }
+			//{ type: 'vpn', level: 4, pos: [-1000,450] }
+		];
+
+		//this pieces of hardware should be placed on game initialization
+		var placedHardware = [
+			{ type: '_hackman', level: 0, pos: [0,100] },
+			{ type: '_lamp', level: 0, pos: [0,-650] },
+			{ type: 'display', level: 0, pos: [0,-70] }
+		];
+
+		var infos = [
+			{ item: '_hackman', content: '', mouseover: '<p>This is you a.k.a. &lsquo; The Hackman &rsquo;</p><p><ul><li>i: '+stats.info.value+'</li><li>i/S:  '+stats.ips.value+'</li></ul></p>'}
+		]
 
 		function gameLoop() {
 			// verloren?
@@ -140,9 +165,6 @@ $(function() {
 	        		//console.log(value*costs[key].ips)/(1000/tick);
 	                stats.info.value += (value*costs[key].ips)/(1000/tick);
 	                stats.ips.value += value*costs[key].ips;
-	                stats.ram.value -= value*costs[key].ram;
-	                stats.cpu.value -= value*costs[key].cpu;
-	                stats.bw.value -= value*costs[key].bw;
 	                stats.aware.value += value*costs[key].aware;
 	        });
 	        
@@ -195,28 +217,6 @@ $(function() {
 			}
 		}
 
-		var layout = [
-			{ type: 'display', level: 2, pos: [380,-70] }, // iDaily
-			{ type: 'display', level: 2, pos: [-380,-70] },
-			{ type: 'display', level: 2, pos: [-190,-270] },
-			{ type: 'display', level: 2, pos: [190,-270] },
-			{ type: 'display', level: 2, pos: [-570,-270] },
-			{ type: 'display', level: 2, pos: [570,-270] },
-			{ type: 'display', level: 2, pos: [-380,-470] },
-			{ type: 'display', level: 2, pos: [570,-470] },
-			{ type: 'server', level: 0, pos: [-870,-50] },
-			{ type: 'server', level: 0, pos: [-1070,-50] },
-			{ type: 'pc', level: 0, pos: [-690,155] },
-			{ type: 'pc', level: 0, pos: [690,155] },
-			{ type: 'pc', level: 0, pos: [850,155] },
-			{ type: 'router', level: 0, pos: [-800,450] },
-			{ type: 'vpn', level: 0, pos: [550,380] },
-			{ type: '_auge', level: 0, pos: [570,-470] },
-			//{ type: '_shop', level: 0, pos: [-380,-470] },
-			{ type: '_news', level: 0, pos: [380,-70] }
-			//{ type: 'vpn', level: 4, pos: [-1000,450] }
-		];
-
 		function placeHardware(type) {
 			if(layout.length>0) {
 				var result = layout.filter(function (layout) { return layout.type == type });
@@ -253,96 +253,106 @@ $(function() {
 		});
 
 
-	var placedHardware = [
-		{ type: '_hackman', level: 0, pos: [0,100] },
-		{ type: '_lamp', level: 0, pos: [0,-650] },
-		{ type: 'display', level: 0, pos: [0,-70] }
-	];
+		for(var i = 0; i < placedHardware.length; i++) {
+			showHardware(i);
+		}
 
 
-	for(var i = 0; i < placedHardware.length; i++) {
-		showHardware(i);
-	}
+		function showHardware(i) {
+			var scale = window.innerHeight/1550;
+			var h_mid = window.innerWidth/2; 
+			var v_mid = window.innerHeight/2;
+			var zindex = 0;
+			var img = new Image();
+			img.src = hardwareLib[placedHardware[i]['type']][placedHardware[i]['level']];
+			img.onload = function() { //falls unser Spiel mal Arsch langsam wird, hier kann man was optimieren
+				if(placedHardware[i]['type'] == '_hackman' ) zindex = 99999;
+				else if(['display', '_lamp-noise'].indexOf(placedHardware[i]['type']) != -1 ) zindex = currentLayer+=2;
+				else zindex = currentLayer++;
+				
+				if(placedHardware[i]['type'] == '_lamp' ) {
+					var $noise = $('<img>', {
+						src: hardwareLib['_lamp_noise'][0],
+						css: {	
+							width: 48*scale+ 'px',
+							position: 'absolute',
+							left: h_mid+placedHardware[i]['pos'][0]*scale-74*scale+img.width*scale/2 + 'px',
+							top: v_mid+placedHardware[i]['pos'][1]*scale-60*scale+img.height*scale/2 + 'px',
+							'z-index': zindex-1
+						},
+						'class': 'noise'
+					});
+					$container.append($noise);
+				}
+
+				if(['display'].indexOf(placedHardware[i]['type']) != -1 ) {
+					var $noise = $('<img>', {
+						src: hardwareLib['_noise'][rand(0,3)],
+						css: {	
+							width: img.width*scale+ 'px',
+							position: 'absolute',
+							left: h_mid+placedHardware[i]['pos'][0]*scale-img.width*scale/2 + 'px',
+							top: v_mid+placedHardware[i]['pos'][1]*scale-img.height*scale/2 + 'px',
+							'z-index': zindex-1
+						},
+						'class': 'noise',
+						'data-id': 'noise-'+i
+					});
+					$container.append($noise);
+				}
 
 
-	function showHardware(i) {
-		var scale = window.innerHeight/1550;
-		var h_mid = window.innerWidth/2; 
-		var v_mid = window.innerHeight/2;
-		var zindex = 0;
-		var img = new Image();
-		img.src = hardwareLib[placedHardware[i]['type']][placedHardware[i]['level']];
-		img.onload = function() { //falls unser Spiel mal Arsch langsam wird, hier kann man was optimieren
-			if(placedHardware[i]['type'] == '_hackman' ) zindex = 99999;
-			else if(['display', '_lamp-noise'].indexOf(placedHardware[i]['type']) != -1 ) zindex = currentLayer+=2;
-			else zindex = currentLayer++;
-			
-			if(placedHardware[i]['type'] == '_lamp' ) {
-				var $noise = $('<img>', {
-					src: hardwareLib['_lamp_noise'][0],
-					css: {	
-						width: 48*scale+ 'px',
-						position: 'absolute',
-						left: h_mid+placedHardware[i]['pos'][0]*scale-74*scale+img.width*scale/2 + 'px',
-						top: v_mid+placedHardware[i]['pos'][1]*scale-60*scale+img.height*scale/2 + 'px',
-						'z-index': zindex-1
-					},
-					'class': 'noise'
-				});
-				$container.append($noise);
-			}
-
-			if(['display'].indexOf(placedHardware[i]['type']) != -1 ) {
-				var $noise = $('<img>', {
-					src: hardwareLib['_noise'][rand(0,3)],
+				var $hw = $('<img>', {
+					src: img.src,
 					css: {	
 						width: img.width*scale+ 'px',
 						position: 'absolute',
 						left: h_mid+placedHardware[i]['pos'][0]*scale-img.width*scale/2 + 'px',
 						top: v_mid+placedHardware[i]['pos'][1]*scale-img.height*scale/2 + 'px',
-						'z-index': zindex-1
+						'z-index': zindex
 					},
-					'class': 'noise',
-					'data-id': 'noise-'+i
+					'class': placedHardware[i]['type'],
+					'data-id': i,
+					'data-type': placedHardware[i]['type']
 				});
-				$container.append($noise);
+				if(['_hackman','_lamp'].indexOf(placedHardware[i]['type']) == -1 ) {
+					$hw.click(function () {
+						upgradeHardware($(this));
+					});
+				}
+				$hw.mouseenter(function () { showInfos($(this)); });
+				$hw.mouseleave(function () { $container.find("[data-id='popup-" + $hw.data('id') +"']").remove(); });
+				$container.append($hw);
 			}
+		}
 
+		function upgradeHardware(hw) {
+			if(placedHardware[hw.data('id')]['level']+1 < hardwareLib[placedHardware[hw.data('id')]['type']].length) {
+				placedHardware[hw.data('id')]['level']++;
+				hw.remove();
+				$container.find("[data-id='noise-" + hw.data('id') +"']").remove();
+				showHardware(hw.data('id'));
+			}
+			else console.log(placedHardware[hw.data('id')]['type']+"max upgrade reached (Level "+placedHardware[hw.data('id')]['level']+")");
+		}
 
-			var $hw = $('<img>', {
-				src: img.src,
-				css: {	
-					width: img.width*scale+ 'px',
-					position: 'absolute',
-					left: h_mid+placedHardware[i]['pos'][0]*scale-img.width*scale/2 + 'px',
-					top: v_mid+placedHardware[i]['pos'][1]*scale-img.height*scale/2 + 'px',
-					'z-index': zindex
+		function showInfos(hw) {
+			var result = infos.filter(function (infos) { return infos.item == hw.data('type') });
+			$popup = $('<div>', {
+				'class': 'popup',
+				html: '<p>'+result[0].mouseover+'</p>',
+				css: {
+					top: hw.position()['top'],
+					left: hw.position()['left']+hw.width()
 				},
-				'class': placedHardware[i]['type'],
-				'data-id': i
+				'data-id': 'popup-'+hw.data('id')
 			});
-			if(placedHardware[i]['type'] != '_hackman' ) {
-				$hw.click(function () {
-					upgradeHardware($(this));
-				});
-			}
-			$container.append($hw);
+			$container.append($popup);
 		}
-	}
 
-	function upgradeHardware(hw) {
-		if(placedHardware[hw.data('id')]['level']+1 < hardwareLib[placedHardware[hw.data('id')]['type']].length) {
-			placedHardware[hw.data('id')]['level']++;
-			hw.remove();
-			$("#game-container").find("[data-id='noise-" + hw.data('id') +"']").remove();
-			showHardware(hw.data('id'));
-		}
-		else alert(placedHardware[hw.data('id')]['type']+"max upgrade reached (Level "+placedHardware[hw.data('id')]['level']+")");
-	}
-
-	function rand (min, max) {
-		return Math.floor(Math.random() * (max - min + 1)) + min;
-	}		
+		function rand (min, max) {
+			return Math.floor(Math.random() * (max - min + 1)) + min;
+		}		
 
 	})();
 
