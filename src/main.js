@@ -56,7 +56,8 @@ $(function() {
 				left: String(.9 * window.innerWidth) + 'px',
 				'z-index': 99998
 			}
-		})
+		}),
+		achvs = new Achievements();
 
 	$container.append($informationBar, $shopBar);
 	$shopBar
@@ -332,6 +333,8 @@ $(function() {
 			keyAlreadyDown = true;
 
 		document.onkeydown = function(e) {
+			achvs.trigger('start');
+			achvs.progress('type', 1);
 			e = e || window.event;
 			var charCode = e.which || e.keyCode,
 				charTyped = String.fromCharCode(charCode),

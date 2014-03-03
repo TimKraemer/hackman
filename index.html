@@ -123,11 +123,49 @@
 			display: none;
 		}
 
+		.achievement {
+			position: absolute;
+			top: 0;
+			left: 0;
+
+			background-color: #333333;
+			padding: 0 20px 10px;
+			font-size: 2.5vh;
+			box-shadow: 0 0 8px 1px darkgrey;
+		}
+
+		.achievement h3, .achievement .text, .achievement .progress {
+			margin-left: 5vw;
+		}
+
+		.achievement img {
+			height: 6vh;
+			position: absolute;
+			top: 5vh;
+			left: 1.5vw;
+			box-shadow: 0 0 10px 1px black;
+		}
+
+		.achievement .progress {
+			background-color: darkgray;
+			margin-top: 2vh;
+		}
+
+		.achievement .progress div {
+			background-color: orange;
+			height: 1vh;
+		}
+
+		.achievements {
+
+		}
+
 
 	</style>
 	<script type="text/javascript" src="libs/jquery.js"></script>
 	<script type="text/javascript" src="libs/jquery.transit.js"></script>
 	<script type="text/javascript" src="src/vector.js"></script>
+	<script src="src/achievements.js"></script>
 	<script src="src/main.js"></script>
 </head>
 <body>
