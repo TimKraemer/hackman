@@ -116,6 +116,21 @@ $(function() {
 			,"neuronet": 	0
 		}
 
+		var hardwareLib = {
+			_auge: ['bin/auge1.png','bin/auge2.png','bin/auge3.png','bin/auge4.png','bin/auge5.png','bin/auge6.png','bin/auge7.png','bin/auge8.png'], //not placeable
+			_shop: ['bin/infocoin.png'], //not placeable
+			_news: ['bin/idaily.png'], //not placeable
+			_hackman: ['bin/Hackbuddy.png'], //not placeable
+			_lamp: ['bin/lampe.png'], //not placeable
+			_noise: ['bin/rauschen01.gif','bin/rauschen02.gif','bin/rauschen03.gif','bin/rauschen04.gif'], //not placeable
+			_lamp_noise: ['bin/lamp-noise.gif'], //not placeable
+			pc: ['bin/Rechner01.png'],
+			display: ['bin/Display01.png','bin/Display02.png','bin/Display03.png','bin/Display04.png'],
+			router: ['bin/router1.png','bin/router2.png','bin/router3.png','bin/router4.png','bin/router5.png'],
+			vpn: ['bin/vpn1.png','bin/vpn2.png','bin/vpn3.png','bin/vpn4.png','bin/vpn5.png'],
+			server: ['bin/Server01.png', 'bin/Server02.png']
+		};		
+
 		function gameLoop() {
 			// verloren?
 			if(stats.aware >= 100) lost();
@@ -129,7 +144,7 @@ $(function() {
 	                stats.bw.value -= value*costs[key].bw;
 	                stats.aware.value += value*costs[key].aware;
 	        });
-
+	        
 			//GUI updaten
 			updateGUI();
 		}
@@ -179,6 +194,41 @@ $(function() {
 			}
 		}
 
+		var layout = [
+			{ type: 'display', level: 2, pos: [380,-70] }, // iDaily
+			{ type: 'display', level: 2, pos: [-380,-70] },
+			{ type: 'display', level: 2, pos: [-190,-270] },
+			{ type: 'display', level: 2, pos: [190,-270] },
+			{ type: 'display', level: 2, pos: [-570,-270] },
+			{ type: 'display', level: 2, pos: [570,-270] },
+			{ type: 'display', level: 2, pos: [-380,-470] },
+			{ type: 'display', level: 2, pos: [570,-470] },
+			{ type: 'server', level: 0, pos: [-870,-50] },
+			{ type: 'server', level: 0, pos: [-1070,-50] },
+			{ type: 'pc', level: 0, pos: [-690,155] },
+			{ type: 'pc', level: 0, pos: [690,155] },
+			{ type: 'pc', level: 0, pos: [850,155] },
+			{ type: 'router', level: 0, pos: [-800,450] },
+			{ type: 'vpn', level: 0, pos: [550,380] },
+			{ type: '_auge', level: 0, pos: [570,-470] },
+			//{ type: '_shop', level: 0, pos: [-380,-470] },
+			{ type: '_news', level: 0, pos: [380,-70] }
+			//{ type: 'vpn', level: 4, pos: [-1000,450] }
+		];
+
+		function placeHardware(type) {
+			if(layout.length>0) {
+				var result = layout.filter(function (layout) { return layout.type == type });
+				if(result.length > 0) {
+					layout.splice(layout.indexOf(result[0]),1); //removes the resulting hardware from layout array
+					placedHardware.push(result[0]);
+					showHardware(placedHardware.length-1);
+				}
+				else console.log('kein platz für '+type);
+			}
+			else console.log('kein platz für mehr hardware');
+		}
+
 		function lost() {
 			alert("you just lost the game!");
 			return true;
@@ -186,6 +236,12 @@ $(function() {
 
 		setInterval(gameLoop, tick);
 
+		$shopBar.find('ul.hardware').append(Object.keys(hardwareLib).map(function(key) {
+			if(key.charAt(0) != '_') //don't show the 'not placeables'
+			return $('<li>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1) + ''}).click(function() {
+				placeHardware(key);
+			});
+		}));
 		$shopBar.find('ul.software').append(Object.keys(levels).map(function(key) {
 			return $('<li>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1) + ' <div class="upgrade-level">Level <span id="u_'+key+'">0</span></div><br>'}).click(function() {
 				upgrade(key);
@@ -195,50 +251,11 @@ $(function() {
 			redrawUpgrade(type);
 		});
 
-	})();
-
-
-	var hardwareLib = {
-		auge: ['bin/auge1.png','bin/auge2.png','bin/auge3.png','bin/auge4.png','bin/auge5.png','bin/auge6.png','bin/auge7.png','bin/auge8.png'],
-		shop: ['bin/infocoin.png'], //todo das passt hier nicht rein
-		news: ['bin/idaily.png'], //auch weg
-		hackman: ['bin/Hackbuddy.png'],
-		lamp: ['bin/lampe.png'],
-		noise: ['bin/rauschen01.gif','bin/rauschen02.gif','bin/rauschen03.gif','bin/rauschen04.gif'],
-		lamp_noise: ['bin/lamp-noise.gif'],
-		pc: ['bin/Rechner01.png'],
-		display: ['bin/Display01.png','bin/Display02.png','bin/Display03.png','bin/Display04.png'],
-		display_free: ['bin/Display03-free.png','bin/Display04-free.png'],
-		router: ['bin/router1.png','bin/router2.png','bin/router3.png','bin/router4.png','bin/router5.png'],
-		vpn: ['bin/vpn1.png','bin/vpn2.png','bin/vpn3.png','bin/vpn4.png','bin/vpn5.png'],
-		server: ['bin/Server01.png', 'bin/Server02.png']
-	};
-
 
 	var placedHardware = [
-		{ type: 'hackman', level: 0, pos: [0,100] },
-		{ type: 'lamp', level: 0, pos: [0,-650] },
-		{ type: 'display', level: 0, pos: [0,-50] },
-		{ type: 'display_free', level: 1, pos: [-380,-70] },
-		{ type: 'display_free', level: 1, pos: [380,-70] },
-		{ type: 'display_free', level: 1, pos: [-190,-270] },
-		{ type: 'display_free', level: 1, pos: [190,-270] },
-		{ type: 'display_free', level: 1, pos: [-570,-270] },
-		{ type: 'display_free', level: 1, pos: [570,-270] },
-		{ type: 'display_free', level: 1, pos: [-380,-470] },
-		{ type: 'display_free', level: 1, pos: [570,-470] },
-		{ type: 'server', level: 1, pos: [-870,-50] },
-		{ type: 'server', level: 1, pos: [-1070,-50] },
-		{ type: 'pc', level: 0, pos: [-690,155] },
-		{ type: 'pc', level: 0, pos: [690,155] },
-		{ type: 'pc', level: 0, pos: [850,155] },
-		{ type: 'router', level: 0, pos: [-800,450] },
-		{ type: 'vpn', level: 4, pos: [550,380] },
-		{ type: 'auge', level: 0, pos: [570,-470] },
-		//{ type: 'shop', level: 0, pos: [-380,-470] },
-		{ type: 'news', level: 0, pos: [380,-70] }
-		//{ type: 'vpn', level: 4, pos: [-1000,450] }
-
+		{ type: '_hackman', level: 0, pos: [0,100] },
+		{ type: '_lamp', level: 0, pos: [0,-650] },
+		{ type: 'display', level: 0, pos: [0,-70] }
 	];
 
 
@@ -255,13 +272,13 @@ $(function() {
 		var img = new Image();
 		img.src = hardwareLib[placedHardware[i]['type']][placedHardware[i]['level']];
 		img.onload = function() { //falls unser Spiel mal Arsch langsam wird, hier kann man was optimieren
-			if(placedHardware[i]['type'] == 'hackman' ) zindex = 99999;
-			else if(['display', 'display_free', 'lamp-noise'].indexOf(placedHardware[i]['type']) != -1 ) zindex = currentLayer+=2;
+			if(placedHardware[i]['type'] == '_hackman' ) zindex = 99999;
+			else if(['display', '_lamp-noise'].indexOf(placedHardware[i]['type']) != -1 ) zindex = currentLayer+=2;
 			else zindex = currentLayer++;
 			
-			if(placedHardware[i]['type'] == 'lamp' ) {
+			if(placedHardware[i]['type'] == '_lamp' ) {
 				var $noise = $('<img>', {
-					src: hardwareLib['lamp_noise'][0],
+					src: hardwareLib['_lamp_noise'][0],
 					css: {	
 						width: 48*scale+ 'px',
 						position: 'absolute',
@@ -274,9 +291,9 @@ $(function() {
 				$container.append($noise);
 			}
 
-			if(['display', 'display_free'].indexOf(placedHardware[i]['type']) != -1 ) {
+			if(['display'].indexOf(placedHardware[i]['type']) != -1 ) {
 				var $noise = $('<img>', {
-					src: hardwareLib['noise'][rand(0,3)],
+					src: hardwareLib['_noise'][rand(0,3)],
 					css: {	
 						width: img.width*scale+ 'px',
 						position: 'absolute',
@@ -284,7 +301,8 @@ $(function() {
 						top: v_mid+placedHardware[i]['pos'][1]*scale-img.height*scale/2 + 'px',
 						'z-index': zindex-1
 					},
-					'class': 'noise'
+					'class': 'noise',
+					'data-id': 'noise-'+i
 				});
 				$container.append($noise);
 			}
@@ -302,7 +320,7 @@ $(function() {
 				'class': placedHardware[i]['type'],
 				'data-id': i
 			});
-			if(placedHardware[i]['type'] != 'hackman' ) {
+			if(placedHardware[i]['type'] != '_hackman' ) {
 				$hw.click(function () {
 					upgradeHardware($(this));
 				});
@@ -315,6 +333,7 @@ $(function() {
 		if(placedHardware[hw.data('id')]['level']+1 < hardwareLib[placedHardware[hw.data('id')]['type']].length) {
 			placedHardware[hw.data('id')]['level']++;
 			hw.remove();
+			$("#game-container").find("[data-id='noise-" + hw.data('id') +"']").remove();
 			showHardware(hw.data('id'));
 		}
 		else alert(placedHardware[hw.data('id')]['type']+"max upgrade reached (Level "+placedHardware[hw.data('id')]['level']+")");
@@ -322,13 +341,22 @@ $(function() {
 
 	function rand (min, max) {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
-	}
+	}		
+
+	})();
+
+
+
+
+
+
 
 	(function() {
 		var keywords = [
 				'ls', 'cp', 'mv', 'rm', 'chmod', 'function',
 				'return', 'int', 'double', 'long', 'String', 'var',
-				'SELECT', 'FROM', 'UPDATE', 'DELETE', 'UNION'
+				'SELECT', 'FROM', 'UPDATE', 'DELETE', 'UNION',
+				'nmap', 'shutdown'
 			],
 			discoveredWords = [],
 			maxKeywordLength = keywords.reduce(function(maxLength, keyword) {
