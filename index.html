@@ -32,7 +32,7 @@
 			background: url(bin/glyphicons_183_volume_down.png) no-repeat left top;
 		}
 
-		.shop {
+		.store {
 			position: absolute;
 			background-color: rgba(255, 255, 255, .3);
 			top: 0;
@@ -44,16 +44,16 @@
 			transition: width 400ms;
 		}
 
-		.shop.open {
+		.store.open {
 			width: 200px;
 		}
 
-		.shop h2 {
+		.store h2 {
 			opacity: 1;
 			transition: all 400ms;
 		}
 
-		.shop:not(.open) h2 {
+		.store:not(.open) h2 {
 			-webkit-transform: rotate(-90deg);
 			-moz-transform: rotate(-90deg);
 			-ms-transform: rotate(-90deg);
@@ -72,7 +72,7 @@
 
 		}
 
-		.shop.open h2 {
+		.store.open h2 {
 			position: relative;
 			top: 0px;
 		}
@@ -87,37 +87,37 @@
 			color: lightgrey;
 		}
 
-		.shop > .content {
+		.store > .content {
 			white-space: nowrap;
 			opacity: 0;
 			transition: opacity 400ms;
 		}
 
-		.shop.open > .content {
+		.store.open > .content {
 			opacity: 1;
 		}
 
-		.shop .label {
+		.store .label {
 			opacity: 1;
 			transition: opacity 400ms;
 		}
 
-		.shop.open .label {
+		.store.open .label {
 			opacity: 0;
 		}
 
-		.shop a {
+		.store a {
 			color: white;
 			text-decoration: none;
 			margin: 0 3px;
 		}
 
-		.shop a.selected {
+		.store a.selected {
 			font-weight: bold;
 			border-bottom: 2px solid red;
 		}
 
-		.shop .items {
+		.store .items {
 			list-style: none;
 			display: none;
 		}
@@ -189,8 +189,8 @@
 </head>
 <body>
 <div id="game-container">
-	<div class="shop">
-		<h2 style="text-align:center">Shop</h2>
+	<div class="store">
+		<h2 style="text-align:center">store</h2>
 		<div class="content">
 			<a href="#" data-for=".hardware">Hardware</a>
 			<a href="#" data-for=".software">Software</a>

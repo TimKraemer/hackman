@@ -32,7 +32,7 @@ $(function() {
 		fontSize = 20,
 		$soundControl = $('<p>', {'class': 'sound', css: {'position':'absolute','top':'0','right':'0'}}),
 		$informationField = $('<p>', {text: '0'}),		
-		$shopBar = $container.find('.shop'),
+		$storeBar = $container.find('.store'),
 		achvs = new Achievements();
 
 	// audio looop, background sound
@@ -43,19 +43,19 @@ $(function() {
 	}, false);
 	//	myAudio.play();
 
-	$container.append($shopBar);
-	$shopBar
+	$container.append($storeBar);
+	$storeBar
 		.mouseenter(function() {
-			$shopBar.addClass('open');
+			$storeBar.addClass('open');
 		})
 		.mouseleave(function() {
-			$shopBar.removeClass('open')
+			$storeBar.removeClass('open')
 		})
 		.on('click', 'a', function(e) {
 			e.preventDefault();
-			$shopBar.find('ul').hide('fast');
-			$shopBar.find($(this).data('for')).show('fast');
-			$shopBar.find('a').removeClass('selected');
+			$storeBar.find('ul').hide('fast');
+			$storeBar.find($(this).data('for')).show('fast');
+			$storeBar.find('a').removeClass('selected');
 			$(this).addClass('selected');
 		})
 		// preselect first tab
@@ -90,52 +90,54 @@ $(function() {
 		// here are hardware items we got
 		var hardwareLib = {
 			_auge: ['bin/auge1.png','bin/auge2.png','bin/auge3.png','bin/auge4.png','bin/auge5.png','bin/auge6.png','bin/auge7.png','bin/auge8.png'], //not placeable
-			_shop: ['bin/infocoin.png'], //not placeable
+			_store: ['bin/infocoin.png'], //not placeable
 			_news: ['bin/idaily.png'], //not placeable
 			_hackman: ['bin/Hackbuddy.png'], //not placeable
 			_lamp: ['bin/lampe.png'], //not placeable
 			_noise: ['bin/rauschen01.gif','bin/rauschen02.gif','bin/rauschen03.gif','bin/rauschen04.gif'], //not placeable
 			_lamp_noise: ['bin/lamp-noise.gif'], //not placeable
-			pc: ['bin/Rechner01.png'],
+			pc_left: ['bin/Rechner01links.png'],
+			pc_right: ['bin/Rechner01rechts.png'],
 			display: ['bin/Display01.png','bin/Display02.png','bin/Display03.png','bin/Display04.png'],
 			router: ['bin/router1.png','bin/router2.png','bin/router3.png','bin/router4.png','bin/router5.png'],
 			vpn: ['bin/vpn1.png','bin/vpn2.png','bin/vpn3.png','bin/vpn4.png','bin/vpn5.png'],
-			server: ['bin/Server01.png', 'bin/Server02.png']
+			server: ['bin/Server1.png', 'bin/Server2.png','bin/Server3.png','bin/Server4.png','bin/Server5.png','bin/Server6.png','bin/Server7.png','bin/Server8.png','bin/Server9.png']
 		};
 
 		//this is the chosen final layout, made by Joan
 		var layout = [
-			{ type: 'display', level: 2, pos: [380,-70] }, // iDaily
-			{ type: 'display', level: 2, pos: [-380,-70] },
+			{ type: 'display', level: 2, pos: [380,-70], id: 'store-display' },
+			{ type: 'display', level: 2, pos: [-380,-70], },
 			{ type: 'display', level: 2, pos: [-190,-270] },
 			{ type: 'display', level: 2, pos: [190,-270] },
 			{ type: 'display', level: 2, pos: [-570,-270] },
 			{ type: 'display', level: 2, pos: [570,-270] },
 			{ type: 'display', level: 2, pos: [-380,-470] },
 			{ type: 'display', level: 2, pos: [570,-470] },
-			{ type: 'server', level: 0, pos: [-870,-50] },
-			{ type: 'server', level: 0, pos: [-1070,-50] },
-			{ type: 'pc', level: 0, pos: [-690,155] },
-			{ type: 'pc', level: 0, pos: [690,155] },
-			{ type: 'pc', level: 0, pos: [850,155] },
+			{ type: 'pc_left', level: 0, pos: [-690,110], z:6 },
+			{ type: 'server', level: 0, pos: [-870,-50], z:5 },
+			{ type: 'server', level: 0, pos: [-1070,-50], z:4 },
+			{ type: 'pc_right', level: 0, pos: [690,110], z:2 },
+			{ type: 'pc_right', level: 0, pos: [850,110], z:1 },
 			{ type: 'router', level: 0, pos: [-800,450] },
 			{ type: 'vpn', level: 0, pos: [550,380] },
 			{ type: '_auge', level: 0, pos: [570,-470] },
-			//{ type: '_shop', level: 0, pos: [-380,-470] },
-			{ type: '_news', level: 0, pos: [380,-70] }
+			{ type: '_store', level: 0, pos: [380,-70], id: 'store' },
+			{ type: '_news', level: 0, pos: [-380,-470] }
 			//{ type: 'vpn', level: 4, pos: [-1000,450] }
 		];
 
 		//this pieces of hardware should be placed on game initialization
 		var placedHardware = [
-			{ type: '_hackman', level: 0, pos: [0,100], id: 'hackman' },
+			{ type: '_hackman', level: 0, pos: [0,100], z: 99999, id: 'hackman' },
 			//{ type: '_lamp', level: 0, pos: [0,-650] },
 			{ type: 'display', level: 0, pos: [0,-70], id: 'start-display' }
 		];
 
 		var infos = [
-			{ item: '_hackman', content: '', mouseover: '<p>This is you a.k.a. &lsquo; The Hackman &rsquo;</p><p><ul><li>i: '+stats.info.value+'</li><li>i/S:  '+stats.ips.value+'</li></ul></p>'},
-			{ item: 'display', content: '', mouseover: ''}
+			{ item: 'hackman', content: '', mouseover: '<p>This is you a.k.a. &lsquo; The Hackman &rsquo;</p><p><ul><li>i: '+stats.info.value+'</li><li>i/S:  '+stats.ips.value+'</li></ul></p>'},
+			{ item: 'start-display', content: '', mouseover: ''},
+			{ item: 'store-display', content: '', mouseover: 'store'},
 		]
 
 		function gameLoop() {
@@ -218,13 +220,13 @@ $(function() {
 
 		setInterval(gameLoop, tick);
 
-		$shopBar.find('ul.hardware').append(Object.keys(hardwareLib).map(function(key) {
+		$storeBar.find('ul.hardware').append(Object.keys(hardwareLib).map(function(key) {
 			if(key.charAt(0) != '_') //don't show the 'not placeables'
 			return $('<li>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1) + ''}).click(function() {
 				placeHardware(key);
 			});
 		}));
-		$shopBar.find('ul.software').append(Object.keys(levels).map(function(key) {
+		$storeBar.find('ul.software').append(Object.keys(levels).map(function(key) {
 			return $('<li>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1) + ' <div class="upgrade-level">Level <span id="u_'+key+'">0</span></div><br>'}).click(function() {
 				upgrade(key);
 			});
@@ -246,8 +248,9 @@ $(function() {
 			var img = new Image();
 			img.src = hardwareLib[placedHardware[i]['type']][placedHardware[i]['level']];
 			img.onload = function() { //falls unser Spiel mal Arsch langsam wird, hier kann man was optimieren
-				if(placedHardware[i]['type'] == '_hackman' ) zindex = 99999;
-				else if(['display', '_lamp-noise'].indexOf(placedHardware[i]['type']) != -1 ) zindex = currentLayer+=2;
+				
+				if(placedHardware[i]['z'] !== 'undefined') zindex = placedHardware[i]['z'];
+				//else if(['display', '_lamp-noise'].indexOf(placedHardware[i]['type']) != -1 ) zindex = currentLayer+=2;
 				else zindex = currentLayer++;
 				
 				// if(placedHardware[i]['type'] == '_lamp' ) {
@@ -282,6 +285,8 @@ $(function() {
 					$container.append($noise);
 				}
 
+
+
 				//this are the poperties of every hardware item
 				var $hw = $('<div>', {
 					css: {
@@ -311,6 +316,14 @@ $(function() {
 				//popups
 				$hw.mouseenter(function () { showInfos($(this),true); });
 				$hw.mouseleave(function () { $container.find("[data-id='popup-" + $hw.data('id') +"']").remove(); });
+				
+				switch (placedHardware[i]['id']) {
+					case 'store-display': {
+						placeHardware('_store');
+						break;
+					}
+					default: break;
+				}
 
 				$container.append($hw);
 			}
@@ -327,23 +340,34 @@ $(function() {
 		}
 
 		function showInfos(hw,popup) {
+			console.log(hw[0].id);
 			if(typeof popup === 'undefined') { popup = false; } //js hat keine echten optionalen parameter?!
-			var result = infos.filter(function (infos) { return infos.item == hw.data('type') });
+			switch(hw[0].id) {
+				case 'store' : 	{var result = infos.filter(function (infos) { return infos.item == 'store-display' });break;}
+				default: 		{var result = infos.filter(function (infos) { return infos.item == hw[0].id });break;}
+			}
+			console.log(result);
 			if(result.length > 0) {
 				hw.html(result[0].content);
 				
-				//start-display
-				if(hw[0].id == 'start-display') {
-					hw.append($informationField);
-					hw.append($soundControl);
-					$soundControl.click(function() {
-						if (myAudio.paused) {
-							myAudio.play();
-						} else {
-							myAudio.pause();
-						}
-						$(this).toggleClass("muted");
-					});						
+				switch(hw[0].id) {
+					case 'start-display' : {
+						hw.append($informationField);
+						hw.append($soundControl);
+						$soundControl.click(function() {
+							if (myAudio.paused) {
+								myAudio.play();
+							} else {
+								myAudio.pause();
+							}
+							$(this).toggleClass("muted");
+						});
+						break;
+					}
+					case 'store-display' : {
+						break;
+					}
+					default : break;
 				}
 
 				if(popup) {
