@@ -149,12 +149,13 @@ $(function() {
 		//this pieces of hardware should be placed on game initialization
 		var placedHardware = [
 			{ type: '_hackman', level: 0, pos: [0,100] },
-			{ type: '_lamp', level: 0, pos: [0,-650] },
+			//{ type: '_lamp', level: 0, pos: [0,-650] },
 			{ type: 'display', level: 0, pos: [0,-70] }
 		];
 
 		var infos = [
-			{ item: '_hackman', content: '', mouseover: '<p>This is you a.k.a. &lsquo; The Hackman &rsquo;</p><p><ul><li>i: '+stats.info.value+'</li><li>i/S:  '+stats.ips.value+'</li></ul></p>'}
+			{ item: '_hackman', content: '', mouseover: '<p>This is you a.k.a. &lsquo; The Hackman &rsquo;</p><p><ul><li>i: '+stats.info.value+'</li><li>i/S:  '+stats.ips.value+'</li></ul></p>'},
+			{ item: 'display', content: '<p>Test</p>', mouseover: ''}
 		]
 
 		function gameLoop() {
@@ -301,17 +302,19 @@ $(function() {
 					$container.append($noise);
 				}
 
-
-				var $hw = $('<img>', {
-					src: img.src,
-					css: {	
+				var $hw = $('<div>', {
+					css: {
+						'background-image': 'url('+img.src+')',
+						'background-size': img.width*scale+'px ' + img.height*scale+'px',
 						width: img.width*scale+ 'px',
+						height: img.height*scale+ 'px',
 						position: 'absolute',
 						left: h_mid+placedHardware[i]['pos'][0]*scale-img.width*scale/2 + 'px',
 						top: v_mid+placedHardware[i]['pos'][1]*scale-img.height*scale/2 + 'px',
+						'font-size': img.width*scale/12+ 'px',
 						'z-index': zindex
 					},
-					'class': placedHardware[i]['type'],
+					'class': placedHardware[i]['type']+placedHardware[i]['level'],
 					'data-id': i,
 					'data-type': placedHardware[i]['type']
 				});
@@ -320,7 +323,8 @@ $(function() {
 						upgradeHardware($(this));
 					});
 				}
-				$hw.mouseenter(function () { showInfos($(this)); });
+				$hw.html(function () {showInfos($(this)) });
+				$hw.mouseenter(function () { showInfos($(this),true); });
 				$hw.mouseleave(function () { $container.find("[data-id='popup-" + $hw.data('id') +"']").remove(); });
 				$container.append($hw);
 			}
@@ -336,18 +340,22 @@ $(function() {
 			else console.log(placedHardware[hw.data('id')]['type']+"max upgrade reached (Level "+placedHardware[hw.data('id')]['level']+")");
 		}
 
-		function showInfos(hw) {
+		function showInfos(hw,popup) {
+			if(typeof popup === 'undefined') { popup = false; } //js hat keine echten optionalen parameter?!
 			var result = infos.filter(function (infos) { return infos.item == hw.data('type') });
-			$popup = $('<div>', {
-				'class': 'popup',
-				html: '<p>'+result[0].mouseover+'</p>',
-				css: {
-					top: hw.position()['top'],
-					left: hw.position()['left']+hw.width()
-				},
-				'data-id': 'popup-'+hw.data('id')
-			});
-			$container.append($popup);
+			hw.html(result[0].content);
+			if(popup) {
+				$popup = $('<div>', {
+					'class': 'popup',
+					html: '<p>'+result[0].mouseover+'</p>',
+					css: {
+						top: hw.position()['top'],
+						left: hw.position()['left']+hw.width()
+					},
+					'data-id': 'popup-'+hw.data('id')
+				});
+				$container.append($popup);				
+			}
 		}
 
 		function rand (min, max) {
