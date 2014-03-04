@@ -29,25 +29,21 @@ $(function() {
 			}
 		},
 		$container = $('#game-container').css({width: window.innerWidth + 'px', height: window.innerHeight + 'px'}),
-		$informationField = $('<span>', {text: 0}),
-		$upgradeButton = $('<span>', {text: ' up'}),
-		$soundControl = $('<span>', {'class': 'sound'}),
 		fontSize = 20,
+		$soundControl = $('<p>', {'class': 'sound', css: {'position':'absolute','top':'0','right':'0'}}),
+		$informationField = $('<p>', {text: '0'}),		
 		$shopBar = $container.find('.shop'),
-		$informationBar = $('<div>', {
-			append: [$informationField, $('<span>', {text: 'i'}), $soundControl, $upgradeButton],
-			css: {
-				'font-size': String(fontSize) + 'px',
-				color: 'white',
-				position: 'absolute',
-				top: String(window.innerHeight - fontSize - 5) + 'px',
-				left: String(.9 * window.innerWidth) + 'px',
-				'z-index': 99998
-			}
-		}),
 		achvs = new Achievements();
 
-	$container.append($informationBar, $shopBar);
+	// audio looop, background sound
+	var myAudio = new Audio('bin/BasicSound.mp3');
+	myAudio.addEventListener('ended', function() {
+		this.currentTime = 0;
+		this.play();
+	}, false);
+	//	myAudio.play();
+
+	$container.append($shopBar);
 	$shopBar
 		.mouseenter(function() {
 			$shopBar.addClass('open');
@@ -64,22 +60,6 @@ $(function() {
 		})
 		// preselect first tab
 		.find('a').first().click();
-
-	// audio looop, background sound
-	var myAudio = new Audio('bin/BasicSound.mp3');
-	myAudio.addEventListener('ended', function() {
-		this.currentTime = 0;
-		this.play();
-	}, false);
-	//	myAudio.play();
-	$soundControl.click(function() {
-		if (myAudio.paused) {
-			myAudio.play();
-		} else {
-			myAudio.pause();
-		}
-		$(this).toggleClass("muted");
-	});
 
 	(function() {
 		var magic = 1.15; // Faktor um den sich die Kosten bei jedem Upgrade erhöhen -> Balance this first!
@@ -148,14 +128,14 @@ $(function() {
 
 		//this pieces of hardware should be placed on game initialization
 		var placedHardware = [
-			{ type: '_hackman', level: 0, pos: [0,100] },
+			{ type: '_hackman', level: 0, pos: [0,100], id: 'hackman' },
 			//{ type: '_lamp', level: 0, pos: [0,-650] },
-			{ type: 'display', level: 0, pos: [0,-70] }
+			{ type: 'display', level: 0, pos: [0,-70], id: 'start-display' }
 		];
 
 		var infos = [
 			{ item: '_hackman', content: '', mouseover: '<p>This is you a.k.a. &lsquo; The Hackman &rsquo;</p><p><ul><li>i: '+stats.info.value+'</li><li>i/S:  '+stats.ips.value+'</li></ul></p>'},
-			{ item: 'display', content: '<p>Test</p>', mouseover: ''}
+			{ item: 'display', content: '', mouseover: ''}
 		]
 
 		function gameLoop() {
@@ -258,7 +238,6 @@ $(function() {
 			showHardware(i);
 		}
 
-
 		function showHardware(i) {
 			var scale = window.innerHeight/1550;
 			var h_mid = window.innerWidth/2; 
@@ -271,21 +250,22 @@ $(function() {
 				else if(['display', '_lamp-noise'].indexOf(placedHardware[i]['type']) != -1 ) zindex = currentLayer+=2;
 				else zindex = currentLayer++;
 				
-				if(placedHardware[i]['type'] == '_lamp' ) {
-					var $noise = $('<img>', {
-						src: hardwareLib['_lamp_noise'][0],
-						css: {	
-							width: 48*scale+ 'px',
-							position: 'absolute',
-							left: h_mid+placedHardware[i]['pos'][0]*scale-74*scale+img.width*scale/2 + 'px',
-							top: v_mid+placedHardware[i]['pos'][1]*scale-60*scale+img.height*scale/2 + 'px',
-							'z-index': zindex-1
-						},
-						'class': 'noise'
-					});
-					$container.append($noise);
-				}
+				// if(placedHardware[i]['type'] == '_lamp' ) {
+				// 	var $noise = $('<img>', {
+				// 		src: hardwareLib['_lamp_noise'][0],
+				// 		css: {	
+				// 			width: 48*scale+ 'px',
+				// 			position: 'absolute',
+				// 			left: h_mid+placedHardware[i]['pos'][0]*scale-74*scale+img.width*scale/2 + 'px',
+				// 			top: v_mid+placedHardware[i]['pos'][1]*scale-60*scale+img.height*scale/2 + 'px',
+				// 			'z-index': zindex-1
+				// 		},
+				// 		'class': 'noise'
+				// 	});
+				// 	$container.append($noise);
+				// }
 
+				// add noise to all Displays
 				if(['display'].indexOf(placedHardware[i]['type']) != -1 ) {
 					var $noise = $('<img>', {
 						src: hardwareLib['_noise'][rand(0,3)],
@@ -302,6 +282,7 @@ $(function() {
 					$container.append($noise);
 				}
 
+				//this are the poperties of every hardware item
 				var $hw = $('<div>', {
 					css: {
 						'background-image': 'url('+img.src+')',
@@ -314,6 +295,7 @@ $(function() {
 						'font-size': img.width*scale/12+ 'px',
 						'z-index': zindex
 					},
+					id: placedHardware[i]['id'],
 					'class': placedHardware[i]['type']+placedHardware[i]['level'],
 					'data-id': i,
 					'data-type': placedHardware[i]['type']
@@ -323,9 +305,13 @@ $(function() {
 						upgradeHardware($(this));
 					});
 				}
+				//text inside displays
 				$hw.html(function () {showInfos($(this)) });
+
+				//popups
 				$hw.mouseenter(function () { showInfos($(this),true); });
 				$hw.mouseleave(function () { $container.find("[data-id='popup-" + $hw.data('id') +"']").remove(); });
+
 				$container.append($hw);
 			}
 		}
@@ -343,24 +329,49 @@ $(function() {
 		function showInfos(hw,popup) {
 			if(typeof popup === 'undefined') { popup = false; } //js hat keine echten optionalen parameter?!
 			var result = infos.filter(function (infos) { return infos.item == hw.data('type') });
-			hw.html(result[0].content);
-			if(popup) {
-				$popup = $('<div>', {
-					'class': 'popup',
-					html: '<p>'+result[0].mouseover+'</p>',
-					css: {
-						top: hw.position()['top'],
-						left: hw.position()['left']+hw.width()
-					},
-					'data-id': 'popup-'+hw.data('id')
-				});
-				$container.append($popup);				
+			if(result.length > 0) {
+				hw.html(result[0].content);
+				
+				//start-display
+				if(hw[0].id == 'start-display') {
+					hw.append($informationField);
+					hw.append($soundControl);
+					$soundControl.click(function() {
+						if (myAudio.paused) {
+							myAudio.play();
+						} else {
+							myAudio.pause();
+						}
+						$(this).toggleClass("muted");
+					});						
+				}
+
+				if(popup) {
+					$popup = $('<div>', {
+						'class': 'popup',
+						html: '<p>'+result[0].mouseover+'</p>',
+						css: {
+							top: hw.position()['top'],
+							left: hw.position()['left']+hw.width()
+						},
+						'data-id': 'popup-'+hw.data('id')
+					});
+					$container.append($popup);				
+				}
 			}
 		}
 
 		function rand (min, max) {
 			return Math.floor(Math.random() * (max - min + 1)) + min;
 		}		
+
+		$(window).resize(function() {
+			console.log('resolution change');
+			$container.html('');
+			for(var i = 0; i < placedHardware.length; i++) {
+				showHardware(i);
+			}
+		});		
 
 	})();
 
@@ -410,7 +421,7 @@ $(function() {
 
 			stats.info.value += value;
 			$informationField.text(Math.round(stats.info.value));
-			var offset = $('._hackman').position(),
+			var offset = $('#hackman').position(),
 				text = '+' + String(value);
 
 			if (keyword) text += ' - ' + keyword;
