@@ -91,6 +91,7 @@ $(function() {
 							{base: 5000,	ips: 10,	aware: 20	}
 			]
 		};
+		stats.info.value += 50000;
 
 		// current level of upgrades per ware
 		var levels = {
@@ -246,15 +247,17 @@ $(function() {
 		setInterval(gameLoop, tick);
 
 		$store.find('table#hardware-table').append(Object.keys(hardwareLib).map(function(key) {
-			if(key.charAt(0) != '_') //don't show the 'not placeables'
-			return $('<tr>').append( [ $('<td>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1)}), $('<td>', {id: 'u_'+key, text: '0'}) ]).click(function() {
-				placeHardware(key);
-			});
+			//don't show the 'not placeables'
+			if(key.charAt(0) != '_') return $('<tr>').append([
+				$('<td>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1)}),
+				$('<td>', {id: 'u_'+key, text: '0'})
+			]);
 		}));
 		$store.find('table#software-table').append(Object.keys(levels).map(function(key) {
-			return $('<tr>').append( [ $('<td>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1)}), $('<td>', {id: 'u_'+key, text: '0'}) ]).click(function() {
-				upgrade(key);
-			});
+			return $('<tr>').append([
+				$('<td>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1)}),
+				$('<td>', {id: 'u_'+key, text: '0'})
+			]);
 		}));
 		Object.keys(levels).forEach(function(type) {
 			redrawUpgrade(type);
@@ -347,6 +350,15 @@ $(function() {
 						$hw.click(function() {
 							$container.find(".popup").remove();
 							$container.append($store);
+							$store
+								.on('click', 'table td', function() {
+									var key = $(this).attr('id');
+									if ($(this).closest('table').attr('id') == 'hardware-table') {
+										placeHardware(key);
+									} else {
+										upgrade(key);
+									}
+								});
 						});
 					}
 					default: break;
