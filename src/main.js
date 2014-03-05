@@ -87,10 +87,16 @@ $(function() {
 			,"bruteforce": 	{base: 3000, 	ips: 10.0,	aware: 3 	}
 			,"keylog": 		{base: 10000, 	ips: 40.0,	aware: 10 	}
 			,"botnet": 		{base: 40000, 	ips: 100.0,	aware: 40 	}
-			,"neuronet": 	{base: 200000,	ips: 400.0,	aware: 200 	}
+			,"neuronet": 	{base: 200000,	ips: 400.0,	aware: 200 	},
+			'display': [
+							{base: 0,		ips: 0,		aware: 0	},
+							{base: 500,		ips: 1,		aware: 0	},
+							{base: 1000,	ips: 5,		aware: 10	},
+							{base: 5000,	ips: 10,	aware: 20	}
+			]
 		};
 
-		// current level of upgrades per software
+		// current level of upgrades per ware
 		var levels = {
 			"script": 		0
 			,"program": 	0
@@ -99,6 +105,7 @@ $(function() {
 			,"keylog": 		0
 			,"botnet": 		0
 			,"neuronet": 	0
+			,'display':		0
 		}
 
 		// here are hardware items we got
@@ -159,13 +166,19 @@ $(function() {
 			// verloren?
 			if(stats.aware >= 100) lost();
 
-	        $.each( levels, function( key, value ) {
-	        		//console.log(value*costs[key].ips)/(1000/tick);
-	                stats.info.value += (value*costs[key].ips)/(1000/tick);
-	                stats.ips.value += value*costs[key].ips;
-	                stats.aware.value += value*costs[key].aware;
-	        });
-	        
+			for (var key in levels) {
+				var value = levels[key],
+					typeCost = costs[key];
+
+				if (!$.isArray(typeCost)) typeCost = [typeCost];
+				for (var i = 0; i < typeCost.length; i++) {
+					var cost = typeCost[i];
+					stats.info.value += (value*cost.ips)/(1000/tick);
+					stats.ips.value += value*cost.ips;
+					stats.aware.value += value*cost.aware;
+				}
+			}
+
 			//GUI updaten
 			updateGUI();
 		}
@@ -340,6 +353,12 @@ $(function() {
 		}
 
 		function upgradeHardware(hw) {
+			var cost = costs[hw.data('type')][hw.data('id')];
+			if (cost.base > stats.info.value) return;
+
+			stats.info.value -= cost.base;
+			levels[hw.data('type')]++;
+
 			if(placedHardware[hw.data('id')]['level']+1 < hardwareLib[placedHardware[hw.data('id')]['type']].length) {
 				placedHardware[hw.data('id')]['level']++;
 				hw.remove();
