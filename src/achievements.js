@@ -16,7 +16,7 @@
 		list: {
 			'start': {title: 'Good start', text: 'Wow, very type!'},
 			'type': {title: 'Typegod', needed: 1000, text: 'I have no idea what I\'m doing'},
-			'store': {title: 'Maxed out', text: 'Great Job, you maxed out your display upgrades! <br/> Let\'s buy some new stuff...', image: 'store.png'},
+			'store': {title: 'Shopping Queen', text: 'Great Job, you maxed out your display upgrades! <br/> Let\'s buy some new stuff...', image: 'store.png'},
 			'e': {secret: true},
 			'f': {secret: true},
 			'g': {secret: true},
