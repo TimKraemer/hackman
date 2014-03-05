@@ -165,7 +165,7 @@
 			min-height: 110px;
 			z-index: 9999999;
 			background: url('bin/sprechblase.png') no-repeat;
-			background-size: 8vw;
+			background-size: 20vmin;
 			background-position: bottom;
 		}
 		.popup p {
@@ -187,11 +187,59 @@
 			margin: 5% 6% 0 5%;
 		}
 
+		.question-popup {
+			position: absolute;
+			left: 10%;
+			top: 10%;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			width: 75%;
+			height: 75%;
+			background-color: rgba(0, 0, 0, 0.9);
+			z-index: 99999;
+			box-shadow: 0 0 5px 1px white;
+			padding: 1em;
+		}
+
+		.question-popup .question {
+			font-size: 3rem;
+			padding-bottom: 2em;
+		}
+
+		.question-popup .answers {
+			margin: 0 auto;
+		}
+
+		.question-popup .answer {
+			display: inline-block;
+			width: 40%;
+			padding: 1em;
+			font-size: 1.5rem;
+			box-shadow: inset 0 0 1px 1px grey;
+		}
+
+		.question-popup .selected {
+			background-color: rgba(255, 140, 0, .8);
+		}
+
+		.question-popup .correct {
+			background-color: darkgreen;
+		}
+
+		.question-popup .incorrect {
+			background-color: darkred;
+		}
+
 	</style>
 	<script type="text/javascript" src="libs/jquery.js"></script>
 	<script type="text/javascript" src="libs/jquery.transit.js"></script>
 	<script type="text/javascript" src="src/vector.js"></script>
 	<script type="text/javascript" src="src/achievements.js"></script>
+	<script type="text/javascript" src="src/quizzes.js"></script>
 	<script type="text/javascript" src="src/main.js"></script>
 </head>
 <body>

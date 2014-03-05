@@ -34,7 +34,8 @@ $(function() {
 		$informationField = $('<p>', {text: '0', css: {'position':'absolute', 'top':'0', 'left':'0'}}),
 		$informationField2 = $('<p>', {text: '0'}),
 		$storeBar = $container.find('.store'),
-		achvs = new Achievements();
+		achvs = new Achievements(),
+		quizzes = new Quizzes();
 
 	$soundControl.click(function() {
 		if (myAudio.paused) {
