@@ -36,6 +36,7 @@ $(function() {
 		$informationFieldIcon = $('<div>', {css: {height: '15px', width: '30px', 'background-image': 'url("bin/infocoin.png")', 'background-size': '15px', 'background-repeat': 'no-repeat', 'margin': '0 0 0 15px', 'padding': '0 0 0 3px'}}),
 		$upgradeButton = $('<p>', {html: '<img src="bin/upgrade.png" width="30px">', css: {'float':'right'}}),
 		$storeBar = $container.find('.store'),
+		muted = false,
 		achvs = new Achievements(),
 		quizzes = new Quizzes();
 
@@ -47,6 +48,7 @@ $(function() {
 			myAudio.pause();
 		}
 		$(this).toggleClass("muted");
+		muted = $(this).hasClass('muted');
 	});
 
 	// audio looop, background sound
@@ -55,7 +57,7 @@ $(function() {
 		this.currentTime = 0;
 		this.play();
 	}, false);
-	//	myAudio.play();
+		myAudio.play();
 
 	$container.append($storeBar);
 	$storeBar
@@ -509,6 +511,7 @@ $(function() {
 					x = Math.sin(n) * C, y = Math.cos(n) * C;
 
 				if (keyword) {
+					if (!muted) (new Audio('MusicIdeen/Sounds/keyboardsingle.ogg')).play();
 					x = 0;
 					y = C;
 				}
