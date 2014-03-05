@@ -492,25 +492,27 @@ $(function() {
 		});		
 	})();
 
-
-
-
-
-
-
 	(function() {
-		var keywords = [
-				'ls', 'cp', 'mv', 'rm', 'chmod', 'function',
-				'return', 'int', 'double', 'long', 'String', 'var',
-				'SELECT', 'FROM', 'UPDATE', 'DELETE', 'UNION',
+		var unixKeywords = ['ls', 'cp', 'mv', 'rm', 'chmod'],
+			sqlKeywords = ['SELECT', 'FROM', 'UPDATE', 'DELETE', 'UNION', 'WHERE'],
+			keywords = $.merge($.merge([
+				'function', 'return', 'int', 'double', 'long', 'String', 'var',
 				'nmap', 'shutdown'
-			],
+			], unixKeywords), sqlKeywords),
 			discoveredWords = [],
 			maxKeywordLength = keywords.reduce(function(maxLength, keyword) {
 				return Math.max(maxLength, keyword.length);
 			}, 0),
 			typedStack = [],
-			keyAlreadyDown = true;
+			keyAlreadyDown = true,
+
+			hasDiscoveredAll = function(keywords) {
+				for (var i = 0; i < keywords.length; i++) {
+					var keyword = keywords[i];
+					if (discoveredWords.indexOf(keyword) == -1) return false;
+				}
+				return true;
+			};
 
 		document.onkeydown = function(e) {
 			achvs.trigger('start');
@@ -576,6 +578,9 @@ $(function() {
 			}, 50);
 
 			discoveredWords.push(keyword);
+
+			if (hasDiscoveredAll(unixKeywords)) achvs.trigger('unix');
+			if (hasDiscoveredAll(sqlKeywords)) achvs.trigger('sql');
 		};
 
 		document.onkeyup = function() {

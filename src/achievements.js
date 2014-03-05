@@ -19,8 +19,8 @@
 			'typemax': {title: 'Charmillionaire', needed: 1000000, text: 'If chars were dollars, you\'d be rich'},
 			'store': {title: 'Shopping Queen', text: 'Great Job, you maxed out your display upgrades! <br/> Let\'s buy some new stuff...', image: 'store.png'},
 			'riddler': {title: 'Riddler', text: 'Or should that be Googler?', needed: 9},
-			'g': {secret: true},
-			'h': {secret: true},
+			'unix': {title: 'Unix beard', text: 'You deserve it'},
+			'sql': {title: 'All our database...', text: '...are belong to you'},
 			'i': {secret: true},
 			'e1': {secret: true},
 			'e2': {secret: true},
@@ -51,7 +51,7 @@
 			else id += '.jpg';
 			$img = $('<img>', {src: 'bin/achievements/' + id});
 
-			if (achv.triggered) $img.addClass('triggered');
+			if (achv.done) $img.addClass('done');
 
 			return $img;
 		},
@@ -64,8 +64,8 @@
 		},
 		trigger: function(id) {
 			var achv = this.get(id);
-			if (!achv.triggered) {
-				achv.triggered = true;
+			if (!achv.done) {
+				achv.done = true;
 				this.count++;
 				this.show(id, achv);
 			}
