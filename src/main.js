@@ -431,6 +431,7 @@ $(function() {
 					function upgradequiz() {
 						quizzes.showRandom().then(function(isCorrect) {
 							if(isCorrect) {
+								achvs.progress('riddler', 1);
 								placeHardware('display');
 								achvs.trigger('store');
 							}
@@ -531,25 +532,27 @@ $(function() {
 		});		
 	})();
 
-
-
-
-
-
-
 	(function() {
-		var keywords = [
-				'ls', 'cp', 'mv', 'rm', 'chmod', 'function',
-				'return', 'int', 'double', 'long', 'String', 'var',
-				'SELECT', 'FROM', 'UPDATE', 'DELETE', 'UNION',
+		var unixKeywords = ['ls', 'cp', 'mv', 'rm', 'chmod'],
+			sqlKeywords = ['SELECT', 'FROM', 'UPDATE', 'DELETE', 'UNION', 'WHERE'],
+			keywords = $.merge($.merge([
+				'function', 'return', 'int', 'double', 'long', 'String', 'var',
 				'nmap', 'shutdown'
-			],
+			], unixKeywords), sqlKeywords),
 			discoveredWords = [],
 			maxKeywordLength = keywords.reduce(function(maxLength, keyword) {
 				return Math.max(maxLength, keyword.length);
 			}, 0),
 			typedStack = [],
-			keyAlreadyDown = true;
+			keyAlreadyDown = true,
+
+			hasDiscoveredAll = function(keywords) {
+				for (var i = 0; i < keywords.length; i++) {
+					var keyword = keywords[i];
+					if (discoveredWords.indexOf(keyword) == -1) return false;
+				}
+				return true;
+			};
 
 		document.onkeydown = function(e) {
 			achvs.trigger('start');
@@ -575,6 +578,7 @@ $(function() {
 			keyAlreadyDown = true;
 
 			achvs.progress('type', 1);
+			achvs.progress('typemax', 1);
 
 			stats.info.value += value;
 			$informationField.text(Math.round(stats.info.value));
@@ -614,6 +618,10 @@ $(function() {
 			}, 50);
 
 			discoveredWords.push(keyword);
+
+			if (hasDiscoveredAll(unixKeywords)) achvs.trigger('unix');
+			if (hasDiscoveredAll(sqlKeywords)) achvs.trigger('sql');
+			if (keywords.length == discoveredWords.length) achvs.trigger('keymax');
 		};
 
 		document.onkeyup = function() {

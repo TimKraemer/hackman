@@ -15,13 +15,13 @@
 		count: 0,
 		list: {
 			'start': {title: 'Good start', text: 'Wow, very type!'},
-			'type': {title: 'Typegod', needed: 1000, text: 'I have no idea what I\'m doing'},
-			'store': {title: 'Maxed out', text: 'Great Job, you maxed out your display upgrades! <br/> Let\'s buy some new stuff...', image: 'store.png'},
-			'e': {secret: true},
-			'f': {secret: true},
-			'g': {secret: true},
-			'h': {secret: true},
-			'i': {secret: true},
+			'type': {title: 'Typegode', needed: 1000, text: 'I have no idea what I\'m doing'},
+			'typemax': {title: 'Charmillionaire', needed: 1000000, text: 'If chars were dollars, you\'d be rich'},
+			'store': {title: 'Shopping Queen', text: 'Great Job, you maxed out your display upgrades! <br/> Let\'s buy some new stuff...', image: 'store.png'},
+			'riddler': {title: 'Riddler', text: 'Or should that be Googler?', needed: 9},
+			'unix': {title: 'Unix beard', text: 'You deserve it'},
+			'sql': {title: 'All our database...', text: '...are belong to you'},
+			'keymax': {title: 'Special monkey', text: 'Or special typewriter?'},
 			'e1': {secret: true},
 			'e2': {secret: true},
 			'e3': {secret: true},
@@ -51,7 +51,7 @@
 			else id += '.jpg';
 			$img = $('<img>', {src: 'bin/achievements/' + id});
 
-			if (achv.triggered) $img.addClass('triggered');
+			if (achv.done) $img.addClass('done');
 
 			return $img;
 		},
@@ -64,8 +64,8 @@
 		},
 		trigger: function(id) {
 			var achv = this.get(id);
-			if (!achv.triggered) {
-				achv.triggered = true;
+			if (!achv.done) {
+				achv.done = true;
 				this.count++;
 				this.show(id, achv);
 			}
