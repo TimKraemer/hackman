@@ -104,7 +104,7 @@ $(function() {
 		// here are hardware items we got
 		var hardwareLib = {
 			_auge: ['bin/auge1.png','bin/auge2.png','bin/auge3.png','bin/auge4.png','bin/auge5.png','bin/auge6.png','bin/auge7.png','bin/auge8.png'], //not placeable
-			_store: ['bin/infocoin.png'], //not placeable
+			_store: ['bin/store.png'], //not placeable
 			_news: ['bin/idaily.png'], //not placeable
 			_hackman: ['bin/Hackbuddy.png'], //not placeable
 			_lamp: ['bin/lampe.png'], //not placeable
@@ -123,8 +123,8 @@ $(function() {
 			//{ type: '_lamp', level: 0, pos: [0,-650] },
 			{ type: '_hackman', level: 0, pos: [0,100], z: 99999, id: 'hackman' },
 			{ type: 'display', level: 0, pos: [0,-70], id: 'start-display' },
-			{ type: 'display', level: 2, pos: [380,-70], id: 'store-display' },
-			{ type: 'display', level: 2, pos: [-380,-70], },
+			{ type: 'display', level: 2, pos: [-380,-70], id: 'store-display' },
+			{ type: 'display', level: 2, pos: [380,-70], },
 			{ type: 'display', level: 2, pos: [-190,-270] },
 			{ type: 'display', level: 2, pos: [190,-270] },
 			{ type: 'display', level: 2, pos: [-570,-270] },
@@ -139,7 +139,8 @@ $(function() {
 			{ type: 'router', level: 0, pos: [-800,450] },
 			{ type: 'vpn', level: 0, pos: [550,380] },
 			{ type: '_auge', level: 0, pos: [570,-470] },
-			{ type: '_store', level: 0, pos: [380,-70], id: 'store' },
+			{ type: '_store', level: 0, pos: [-380,-70], id: 'store' },
+			{ type: '_store', level: 0, pos: [-380,-70], id: 'store2' },
 			{ type: '_news', level: 0, pos: [-380,-470] }
 			//{ type: 'vpn', level: 4, pos: [-1000,450] }
 		];
@@ -152,7 +153,7 @@ $(function() {
 		var infos = [
 			{ item: 'hackman', content: '', mouseover: '<p>This is you &lsquo; The Hackman &rsquo;</p>'},
 			{ item: 'start-display', content: '', mouseover: ''},
-			{ item: 'store-display', content: '', mouseover: '<p>store</p>'},
+			{ item: 'store-display', content: '', mouseover: '<p>This is the store, buy all the things!!1</p>'},
 		]
 
 		function gameLoop() {
@@ -316,15 +317,16 @@ $(function() {
 					'data-id': i,
 					'data-type': placedHardware[i]['type']
 				});
-				if(['_hackman','_lamp'].indexOf(placedHardware[i]['type']) == -1 ) {
-					$hw.click(function () {
-						upgradeHardware($(this));
-					});
-				}
+				// if(['_hackman','_lamp'].indexOf(placedHardware[i]['type']) == -1 ) {
+				// 	$hw.click(function () {
+				// 		upgradeHardware($(this));
+				// 	});
+				// }
 				//text inside displays
 				$hw.html(function () {showInfos($(this)) });
 
 				//popups
+
 				$hw.mouseenter(function () { showInfos($(this),true); });
 				
 				switch (placedHardware[i]['id']) {
@@ -343,9 +345,15 @@ $(function() {
 			if(placedHardware[hw.data('id')]['level']+1 < hardwareLib[placedHardware[hw.data('id')]['type']].length) {
 				placedHardware[hw.data('id')]['level']++;
 				hw.remove();
-				$container.find(".popup").remove();
+				//$container.find(".popup").remove();
 				$container.find("[data-id='noise-" + hw.data('id') +"']").remove();
 				showHardware(hw.data('id'));
+
+				//when start-display reached level 4 give us an additional display
+				if(hw[0]['id'] == 'start-display' && placedHardware[hw.data('id')]['level'] == 3) {
+					placeHardware('display');
+					achvs.trigger('store');
+				}
 			}
 			else console.log(placedHardware[hw.data('id')]['type']+"max upgrade reached (Level "+placedHardware[hw.data('id')]['level']+")");
 		}
@@ -387,17 +395,20 @@ $(function() {
 						'data-id': 'popup-'+hw.data('id')
 					});
 
+					$popup.append($upgradeButton);
 					switch(hw[0].id) {
 						case 'start-display' :
 						case 'hackman' : {
 							$popup.append($informationFieldIcon);
 							$upgradeButton.click(function() { upgradeHardware($('#start-display')) }); //FIXME: references start-display, which may not have been loaded yet
-							$popup.append($upgradeButton);
 							$popup.append($soundControl);
 							break;
 						}
+						case 'store' : {
+							$upgradeButton.click(function() { upgradeHardware($('#store-display')) });		//FIXME: references start-display, which may not have been loaded yet					
+						}
 						default : {
-							$popup.append($upgradeButton);
+							$upgradeButton.click(function() { upgradeHardware(hw) });
 							break;
 						}
 					}
@@ -411,6 +422,11 @@ $(function() {
 		function rand (min, max) {
 			return Math.floor(Math.random() * (max - min + 1)) + min;
 		}		
+
+
+		$container.click(function(e) {
+			if(e.target == $('#game-container')[0]) $container.find(".popup").remove();
+		});
 
 		$(window).resize(function() {
 			console.log('resolution change');

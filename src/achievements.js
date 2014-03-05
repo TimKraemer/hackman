@@ -11,7 +11,8 @@
 		count: 0,
 		list: {
 			'start': {title: 'Good start', text: 'Wow, very type!'},
-			'type': {title: 'Typegod', needed: 1000, text: 'I have no idea what I\'m doing'}
+			'type': {title: 'Typegod', needed: 1000, text: 'I have no idea what I\'m doing'},
+			'store': {title: 'Maxed out', text: 'Great Job, you maxed out your display upgrades! <br/> Let\'s buy some new stuff...', image: 'store.png'}
 		},
 		get: function(id) {
 			var achv = this.list[id];
@@ -47,7 +48,7 @@
 				$el = $('<div>', {class: 'achievement', append: [
 					createImgForId(id),
 					$('<h3>', {text: achv.title}),
-					$('<div>', {class: 'text', text: achv.text})
+					$('<div>', {class: 'text', html: achv.text})
 				]});
 
 			$el.click(function() {
