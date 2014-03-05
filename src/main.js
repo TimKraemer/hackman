@@ -357,6 +357,7 @@ $(function() {
 				$container.append($hw);
 
 				if ($hw[0].id != 'hackman' && $hw.attr('class').indexOf('display0')) {
+					if (!muted) (new Audio('bin/NewDevice.ogg')).play();
 					if ($noise) $noise.hide();
 					var top = $hw.css('top');
 					$.cssEase['bounce'] = 'cubic-bezier(.65,1.89,0,.52)';
@@ -538,7 +539,7 @@ $(function() {
 					x = Math.sin(n) * C, y = Math.cos(n) * C;
 
 				if (keyword) {
-					if (!muted) (new Audio('MusicIdeen/Sounds/keyboardsingle.ogg')).play();
+					if (!muted) (new Audio('bin/keyboardsingle.ogg')).play();
 					x = 0;
 					y = C;
 				}
