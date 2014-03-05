@@ -402,8 +402,7 @@ $(function() {
 
 			stats.info.value += value;
 			$informationField.text(Math.round(stats.info.value));
-			var offset = $('._hackman').position(),
-				text = '+' + String(value);
+			var text = '+' + String(value);
 
 			if (keyword) text += ' - ' + keyword;
 
@@ -412,8 +411,8 @@ $(function() {
 				'class': 'information-up',
 				css: {
 					position: 'absolute',
-					left: String(offset.left + 50) + 'px',
-					top: String(offset.top) + 'px',
+					left: '50vw',
+					top: '50vh',
 					'z-index': 99997
 				}
 			});
