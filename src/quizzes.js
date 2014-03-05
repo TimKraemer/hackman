@@ -4,6 +4,19 @@
 		this.length = from < 0 ? this.length + from : from;
 		return this.push.apply(this, rest);
 	};
+	$.fn.shuffleChildren = function() {
+		$.each(this.get(), function(index, el) {
+			var $el = $(el);
+			var $find = $el.children();
+
+			$find.sort(function() {
+				return 0.5 - Math.random();
+			});
+
+			$el.empty();
+			$find.appendTo($el);
+		});
+	};
 	Quizzes = function() {
 	};
 	Quizzes.prototype = {
@@ -19,8 +32,8 @@
 				correct: 0
 			},
 			{
-				question: 'In which cases can user input be trusted?',
-				answers: ['Always', 'Never', 'After authentication' , 'A'],
+				question: 'Application security wise, when is user input to be trusted?',
+				answers: ['Always', 'Never', 'After authentication' , 'Plaintext input'],
 				correct: 1
 			}
 		],
@@ -31,7 +44,7 @@
 				$question = $('<div>', {class: 'question', text: data.question}),
 				$answers = $('<div>', {class: 'answers'}),
 				$el = $('<div>', {
-					class: 'question-popup',
+					class: 'big-popup question-popup',
 					append: [
 						$question,
 						$answers

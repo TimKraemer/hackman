@@ -1,7 +1,10 @@
 (function() {
 	var getPc = function(achv) {
-		return achv.amount === undefined ? 0 : (achv.amount / achv.needed).toFixed(2);
-	};
+			return achv.amount === undefined ? 0 : (achv.amount / achv.needed).toFixed(2);
+		},
+		createImgForId = function(id) {
+			return $('<img>', {src: 'images/achievements/' + id + '.jpg'})
+		};
 	Achievements = function() {
 	};
 	Achievements.prototype = {
@@ -40,17 +43,21 @@
 			}
 		},
 		show: function(id, achv) {
-			var $el = $('<div>', {class: 'achievement', append: [
-				$('<img>', {src: 'images/achievements/' + id + '.jpg'}),
-				$('<h3>', {text: achv.title}),
-				$('<div>', {class: 'text', text: achv.text})
-			]});
+			var self = this,
+				$el = $('<div>', {class: 'achievement', append: [
+					createImgForId(id),
+					$('<h3>', {text: achv.title}),
+					$('<div>', {class: 'text', text: achv.text})
+				]});
+
+			$el.click(function() {
+				self.showAll();
+			});
 
 			if (achv.amount) {
 				var pc = getPc(achv);
 				$el.append($('<div>', {class: 'progress', append: $('<div>', {css: {width: String(pc * 100) + '%'}})}));
 			}
-
 
 			$(document.body).append($el);
 			$el.css('top', '-' + String($el.outerHeight()) + 'px');
@@ -63,7 +70,13 @@
 			});
 		},
 		showAll: function() {
-			
+			var $el = $('<div>', {class: 'big-popup achievements'});
+
+			for (var id in this.list) {
+				$el.append(createImgForId(id));
+			}
+
+			$(document.body).append($el);
 		}
 	}
 })();
