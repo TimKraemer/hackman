@@ -32,10 +32,13 @@ $(function() {
 		fontSize = 20,
 		$soundControl = $('<p>', {'class': 'sound'}),
 		$informationField = $('<p>', {text: '0', css: {'position':'absolute', 'top':'0', 'left':'0'}}),
-		$informationField2 = $('<p>', {text: '0'}),
+		$informationField2 = $('<p>', {text: '0', css: {'float': 'left', 'padding': '2px 0 0 14px'}}),
+		$informationFieldIcon = $('<div>', {css: {height: '15px', width: '30px', 'background-image': 'url("bin/infocoin.png")', 'background-size': '15px', 'background-repeat': 'no-repeat', 'margin': '0 0 0 15px', 'padding': '0 0 0 3px'}}),
+		$upgradeButton = $('<p>', {html: '<img src="bin/upgrade.png" width="30px">', css: {'float':'right'}}),
 		$storeBar = $container.find('.store'),
 		achvs = new Achievements();
 
+	$informationFieldIcon.append($informationField2);
 	$soundControl.click(function() {
 		if (myAudio.paused) {
 			myAudio.play();
@@ -146,9 +149,9 @@ $(function() {
 		placeHardware('display');
 
 		var infos = [
-			{ item: 'hackman', content: '', mouseover: '<p>This is you a.k.a. &lsquo; The Hackman &rsquo;</p>'},
+			{ item: 'hackman', content: '', mouseover: '<p>This is you &lsquo; The Hackman &rsquo;</p>'},
 			{ item: 'start-display', content: '', mouseover: ''},
-			{ item: 'store-display', content: '', mouseover: 'store'},
+			{ item: 'store-display', content: '', mouseover: '<p>store</p>'},
 		]
 
 		function gameLoop() {
@@ -373,14 +376,12 @@ $(function() {
 				}
 
 				if(popup) {
-					console.log(hw);
 					$popup = $('<div>', {
 						'class': 'popup',
 						html: result[0].mouseover,
 						css: {
 							top: top+'px',
-							left: left+'px',
-							'z-index': hw[0]['style']['zIndex']-1
+							left: left+'px'
 						},
 						'data-id': 'popup-'+hw.data('id')
 					});
@@ -388,11 +389,16 @@ $(function() {
 					switch(hw[0].id) {
 						case 'start-display' :
 						case 'hackman' : {
-							$popup.append($informationField2);
+							$popup.append($informationFieldIcon);
+							$upgradeButton.click(function() { upgradeHardware($('#start-display')) }); //FIXME: references start-display, which may not have been loaded yet
+							$popup.append($upgradeButton);
 							$popup.append($soundControl);
 							break;
 						}
-						default : break;
+						default : {
+							$popup.append($upgradeButton);
+							break;
+						}
 					}
 
 					$container.find(".popup").remove();
