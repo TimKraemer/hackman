@@ -4,6 +4,13 @@
 		},
 		createImgForId = function(id) {
 			return $('<img>', {src: 'images/achievements/' + id + '.jpg'})
+		},
+		slideUpAndRemove = function($el) {
+			var self = this;
+			$el.transit({top: '-' + String($el.outerHeight()) + 'px'}, function() {
+				self.$activeAchv = undefined;
+				$el.remove();
+			});
 		};
 	Achievements = function() {
 	};
@@ -62,13 +69,14 @@
 
 			$(document.body).append($el);
 			$el.css('top', '-' + String($el.outerHeight()) + 'px');
+			if (this.$activeAchv) slideUpAndRemove(this.$activeAchv);
 			$el.transit({top: 0, duration: 800}, function() {
 				setTimeout(function() {
-					$el.transit({top: '-' + String($el.outerHeight()) + 'px'}, function() {
-						$el.remove();
-					});
+					if (!$el) return;
+					slideUpAndRemove($el);
 				}, (achv.title.length + achv.text.length) * 150);
 			});
+			this.$activeAchv = $el;
 		},
 		showAll: function() {
 			var $el = $('<div>', {class: 'big-popup achievements'});
