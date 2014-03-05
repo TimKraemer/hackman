@@ -30,10 +30,20 @@ $(function() {
 		},
 		$container = $('#game-container').css({width: window.innerWidth + 'px', height: window.innerHeight + 'px'}),
 		fontSize = 20,
-		$soundControl = $('<p>', {'class': 'sound', css: {'position':'absolute','top':'0','right':'0'}}),
-		$informationField = $('<p>', {text: '0'}),		
+		$soundControl = $('<p>', {'class': 'sound'}),
+		$informationField = $('<p>', {text: '0', css: {'position':'absolute', 'top':'0', 'left':'0'}}),
+		$informationField2 = $('<p>', {text: '0'}),
 		$storeBar = $container.find('.store'),
 		achvs = new Achievements();
+
+	$soundControl.click(function() {
+		if (myAudio.paused) {
+			myAudio.play();
+		} else {
+			myAudio.pause();
+		}
+		$(this).toggleClass("muted");
+	});
 
 	// audio looop, background sound
 	var myAudio = new Audio('bin/BasicSound.mp3');
@@ -106,6 +116,9 @@ $(function() {
 
 		//this is the chosen final layout, made by Joan
 		var layout = [
+			//{ type: '_lamp', level: 0, pos: [0,-650] },
+			{ type: '_hackman', level: 0, pos: [0,100], z: 99999, id: 'hackman' },
+			{ type: 'display', level: 0, pos: [0,-70], id: 'start-display' },
 			{ type: 'display', level: 2, pos: [380,-70], id: 'store-display' },
 			{ type: 'display', level: 2, pos: [-380,-70], },
 			{ type: 'display', level: 2, pos: [-190,-270] },
@@ -127,15 +140,13 @@ $(function() {
 			//{ type: 'vpn', level: 4, pos: [-1000,450] }
 		];
 
-		//this pieces of hardware should be placed on game initialization
-		var placedHardware = [
-			{ type: '_hackman', level: 0, pos: [0,100], z: 99999, id: 'hackman' },
-			//{ type: '_lamp', level: 0, pos: [0,-650] },
-			{ type: 'display', level: 0, pos: [0,-70], id: 'start-display' }
-		];
+		var placedHardware = [];
+
+		placeHardware('_hackman');
+		placeHardware('display');
 
 		var infos = [
-			{ item: 'hackman', content: '', mouseover: '<p>This is you a.k.a. &lsquo; The Hackman &rsquo;</p><p><ul><li>i: '+stats.info.value+'</li><li>i/S:  '+stats.ips.value+'</li></ul></p>'},
+			{ item: 'hackman', content: '', mouseover: '<p>This is you a.k.a. &lsquo; The Hackman &rsquo;</p>'},
 			{ item: 'start-display', content: '', mouseover: ''},
 			{ item: 'store-display', content: '', mouseover: 'store'},
 		]
@@ -162,6 +173,7 @@ $(function() {
 		function updateGUI() {
 			//information counter
 			$informationField.text(Math.round(stats.info.value));
+			$informationField2.text($informationField.text());
 
 			//enable/disable upgrades
 			toggleUpgrade();
@@ -234,11 +246,6 @@ $(function() {
 		Object.keys(levels).forEach(function(type) {
 			redrawUpgrade(type);
 		});
-
-
-		for(var i = 0; i < placedHardware.length; i++) {
-			showHardware(i);
-		}
 
 		function showHardware(i) {
 			var scale = window.innerHeight/1550;
@@ -315,7 +322,6 @@ $(function() {
 
 				//popups
 				$hw.mouseenter(function () { showInfos($(this),true); });
-				$hw.mouseleave(function () { $container.find("[data-id='popup-" + $hw.data('id') +"']").remove(); });
 				
 				switch (placedHardware[i]['id']) {
 					case 'store-display': {
@@ -333,6 +339,7 @@ $(function() {
 			if(placedHardware[hw.data('id')]['level']+1 < hardwareLib[placedHardware[hw.data('id')]['type']].length) {
 				placedHardware[hw.data('id')]['level']++;
 				hw.remove();
+				$container.find(".popup").remove();
 				$container.find("[data-id='noise-" + hw.data('id') +"']").remove();
 				showHardware(hw.data('id'));
 			}
@@ -340,47 +347,56 @@ $(function() {
 		}
 
 		function showInfos(hw,popup) {
-			console.log(hw[0].id);
 			if(typeof popup === 'undefined') { popup = false; } //js hat keine echten optionalen parameter?!
 			switch(hw[0].id) {
-				case 'store' : 	{var result = infos.filter(function (infos) { return infos.item == 'store-display' });break;}
-				default: 		{var result = infos.filter(function (infos) { return infos.item == hw[0].id });break;}
+				case 'store' : 			{var result = infos.filter(function (infos) { return infos.item == 'store-display' });break;}
+				case 'start-display' : 	{var result = infos.filter(function (infos) { return infos.item == 'hackman' });break;}
+				default: 				{var result = infos.filter(function (infos) { return infos.item == hw[0].id });break;}
 			}
-			console.log(result);
 			if(result.length > 0) {
 				hw.html(result[0].content);
 				
+				var top = 0, left = 0;
 				switch(hw[0].id) {
 					case 'start-display' : {
 						hw.append($informationField);
-						hw.append($soundControl);
-						$soundControl.click(function() {
-							if (myAudio.paused) {
-								myAudio.play();
-							} else {
-								myAudio.pause();
-							}
-							$(this).toggleClass("muted");
-						});
+						//dirty workaround to position the popup of the start-display to position of the hackman popup
+						top = $('#hackman').position()['top']-$('#hackman').height()/4;
+						left = $('#hackman').position()['left']+$('#hackman').width()-5;
 						break;
 					}
-					case 'store-display' : {
+					default : {
+						top = hw.position()['top']-hw.height()/4;
+						left = hw.position()['left']+hw.width()-5;
 						break;
 					}
-					default : break;
 				}
 
 				if(popup) {
+					console.log(hw);
 					$popup = $('<div>', {
 						'class': 'popup',
-						html: '<p>'+result[0].mouseover+'</p>',
+						html: result[0].mouseover,
 						css: {
-							top: hw.position()['top'],
-							left: hw.position()['left']+hw.width()
+							top: top+'px',
+							left: left+'px',
+							'z-index': hw[0]['style']['zIndex']-1
 						},
 						'data-id': 'popup-'+hw.data('id')
 					});
-					$container.append($popup);				
+
+					switch(hw[0].id) {
+						case 'start-display' :
+						case 'hackman' : {
+							$popup.append($informationField2);
+							$popup.append($soundControl);
+							break;
+						}
+						default : break;
+					}
+
+					$container.find(".popup").remove();
+					$container.append($popup);
 				}
 			}
 		}
@@ -396,7 +412,6 @@ $(function() {
 				showHardware(i);
 			}
 		});		
-
 	})();
 
 
@@ -445,6 +460,7 @@ $(function() {
 
 			stats.info.value += value;
 			$informationField.text(Math.round(stats.info.value));
+			$informationField2.text($informationField.text());
 			var offset = $('#hackman').position(),
 				text = '+' + String(value);
 
