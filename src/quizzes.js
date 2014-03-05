@@ -4,26 +4,13 @@
 		this.length = from < 0 ? this.length + from : from;
 		return this.push.apply(this, rest);
 	};
-	$.fn.shuffleChildren = function() {
-		$.each(this.get(), function(index, el) {
-			var $el = $(el);
-			var $find = $el.children();
-
-			$find.sort(function() {
-				return 0.5 - Math.random();
-			});
-
-			$el.empty();
-			$find.appendTo($el);
-		});
-	};
 	Quizzes = function() {
 	};
 	Quizzes.prototype = {
 		unanswered: [
 			{
 				question: 'What is not a danger of Cross-site scripting (XSS)?',
-				answers: ['Tampered page', 'Login theft', 'Remote code execution', 'A'],
+				answers: ['Tampered page', 'Login theft', 'Remote code execution', 'Scary images'],
 				correct: 2
 			},
 			{
