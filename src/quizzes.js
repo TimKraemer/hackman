@@ -25,25 +25,37 @@
 			},
 			{
 				question: 'Under which nickname is John Thomas Draper known best?',
-				answers: ['Phantom Phreak','Cereal Killer','Notch','Captain Crunch'],
+				answers: ['Phantom Phreak', 'Cereal Killer', 'Notch', 'Captain Crunch'],
 				correct: 3
 			},
 			{
 				question: 'What is Robbert Tappan Morris best known for? He ist best known for...',
-				answers: ['...takeover of all of the telephone lines for Los Angeles radio station KIIS-FM',
+				answers: [
+					'...takeover of all of the telephone lines for Los Angeles radio station KIIS-FM',
 					'...creating a Worm, considered the first computer worm on the Internet',
-					'...beeing a video game programmer','...beeing a founder of Sun Microsystems'],
+					'...beeing a video game programmer', '...beeing a founder of Sun Microsystems'
+				],
 				correct: 1
 			},
 			{
 				question: 'Who hacked into the bank network SWIFT and transferred 10.7 Mio US$ to accounts set up by accomplices abroad',
-				answers: ['Kevin Poulsen','George Francis Hotz','Vladimir Levin','L. Rafael Reif'],
+				answers: ['Kevin Poulsen', 'George Francis Hotz', 'Vladimir Levin', 'L. Rafael Reif'],
 				correct: 2
 			},
 			{
 				question: 'Who was a founder of WikiLeaks?',
-				answers: ['Notch','Fastjack','Mendax','Pyro'],
+				answers: ['Notch', 'Fastjack', 'Mendax', 'Pyro'],
 				correct: 2
+			},
+			{
+				question: 'Who is the primary creator of a number of high-end viruses including Coconut-A, Sahay-A, and Sharp-A?',
+				answers: ['Nicholas Allegra', 'Kim Vanvaeck', 'Aaron Bond', 'David Lightman'],
+				correct: 1
+			},
+			{
+				question: 'Who became known for presenting an attack against Vista kernel protection mechanism,	and also a technique called "Blue Pill"?',
+				answers: ['Joanna Rutkowska', 'Dr. Jennifer Katherine Mack', 'Dr. Stephen Falken', 'Thomas A. Anderson'],
+				correct: 0
 			}
 		],
 		showRandom: function() {
