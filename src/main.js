@@ -52,8 +52,6 @@ $(function() {
 		achvs = new Achievements(),
 		quizzes = new Quizzes();
 
-	achvs.showAll();
-
 	$informationFieldIcon.append($informationField2);
 	$soundControl.click(function() {
 		if (myAudio.paused) {
