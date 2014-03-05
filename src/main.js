@@ -36,7 +36,8 @@ $(function() {
 		$informationFieldIcon = $('<div>', {css: {height: '15px', width: '30px', 'background-image': 'url("bin/infocoin.png")', 'background-size': '15px', 'background-repeat': 'no-repeat', 'margin': '0 0 0 15px', 'padding': '0 0 0 3px'}}),
 		$upgradeButton = $('<p>', {html: '<img src="bin/upgrade.png" width="30px">', css: {'float':'right'}}),
 		$storeBar = $container.find('.store'),
-		achvs = new Achievements();
+		achvs = new Achievements(),
+		quizzes = new Quizzes();
 
 	$informationFieldIcon.append($informationField2);
 	$soundControl.click(function() {

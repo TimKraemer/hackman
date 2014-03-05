@@ -8,6 +8,12 @@
 			color: white;
 			font-family: Sans-Serif;
 			margin:0;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
 		}
 
 		#game-container {
@@ -135,14 +141,14 @@
 		}
 
 		.achievement h3, .achievement .text, .achievement .progress {
-			margin-left: 5vw;
+			margin-left: 3.5em;
 		}
 
 		.achievement img {
-			height: 6vh;
+			height: 3em;
 			position: absolute;
-			top: 5vh;
-			left: 1.5vw;
+			top: 1.5em;
+			left: .5em;
 			box-shadow: 0 0 10px 1px black;
 		}
 
@@ -157,7 +163,12 @@
 		}
 
 		.achievements {
+			background-color: rgba(255, 0, 0, .8);
+		}
 
+		.achievements img {
+			width: 5em;
+			height: 5em;
 		}
 
 		.popup {
@@ -184,15 +195,58 @@
 		.display2 p{
 			margin: 7% 8% 0 7%;
 		}
+		.big-popup {
+			position: absolute;
+			left: 10%;
+			top: 10%;
+			width: 75%;
+			height: 75%;
+			z-index: 99999;
+			padding: 1em;
+		}
+		.question-popup {
+			background-color: rgba(0, 0, 0, 0.9);
+			box-shadow: 0 0 5px 1px white;
+		}
+
 		.display3 p{
 			margin: 5% 6% 0 5%;
 		}
 
+		.question-popup .question {
+			font-size: 3rem;
+			padding-bottom: 2em;
+		}
+
+		.question-popup .answers {
+			margin: 0 auto;
+		}
+
+		.question-popup .answer {
+			display: inline-block;
+			width: 40%;
+			padding: 1em;
+			font-size: 1.5rem;
+			box-shadow: inset 0 0 1px 1px grey;
+		}
+
+		.question-popup .selected {
+			background-color: rgba(255, 140, 0, .8);
+		}
+
+		.question-popup .correct {
+			background-color: darkgreen;
+		}
+
+		.question-popup .incorrect {
+			background-color: darkred;
+		}
 	</style>
 	<script type="text/javascript" src="libs/jquery.js"></script>
 	<script type="text/javascript" src="libs/jquery.transit.js"></script>
 	<script type="text/javascript" src="src/vector.js"></script>
 	<script type="text/javascript" src="src/achievements.js"></script>
+	<script type="text/javascript" src="src/quizzes.js"></script>
 	<script type="text/javascript" src="src/main.js"></script>
 </head>
 <body>
