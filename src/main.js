@@ -355,6 +355,15 @@ $(function() {
 				}
 
 				$container.append($hw);
+
+				if ($hw[0].id != 'hackman' && $hw.attr('class').indexOf('display0')) {
+					if ($noise) $noise.hide();
+					var top = $hw.css('top');
+					$.cssEase['bounce'] = 'cubic-bezier(.65,1.89,0,.52)';
+					$hw.css('top', 0).transit({top: top}, 400, 'bounce', function() {
+						if ($noise) $noise.show();
+					});
+				}
 			}
 		}
 
