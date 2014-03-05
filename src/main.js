@@ -29,49 +29,13 @@ $(function() {
 			}
 		},
 		$container = $('#game-container').css({width: window.innerWidth + 'px', height: window.innerHeight + 'px'}),
-		$informationField = $('<span>', {text: 0}),
-		$upgradeButton = $('<span>', {text: ' up'}),
-		$soundControl = $('<span>', {'class': 'sound'}),
 		fontSize = 20,
-		$shopBar = $container.find('.shop'),
-		$informationBar = $('<div>', {
-			append: [$informationField, $('<span>', {text: 'i'}), $soundControl, $upgradeButton],
-			css: {
-				'font-size': String(fontSize) + 'px',
-				color: 'white',
-				position: 'absolute',
-				top: String(window.innerHeight - fontSize - 5) + 'px',
-				left: String(.9 * window.innerWidth) + 'px',
-				'z-index': 99998
-			}
-		}),
+		$soundControl = $('<p>', {'class': 'sound'}),
+		$informationField = $('<p>', {text: '0', css: {'position':'absolute', 'top':'0', 'left':'0'}}),
+		$informationField2 = $('<p>', {text: '0'}),
+		$storeBar = $container.find('.store'),
 		achvs = new Achievements();
 
-	$container.append($informationBar, $shopBar);
-	$shopBar
-		.mouseenter(function() {
-			$shopBar.addClass('open');
-		})
-		.mouseleave(function() {
-			$shopBar.removeClass('open')
-		})
-		.on('click', 'a', function(e) {
-			e.preventDefault();
-			$shopBar.find('ul').hide('fast');
-			$shopBar.find($(this).data('for')).show('fast');
-			$shopBar.find('a').removeClass('selected');
-			$(this).addClass('selected');
-		})
-		// preselect first tab
-		.find('a').first().click();
-
-	// audio looop, background sound
-	var myAudio = new Audio('bin/BasicSound.mp3');
-	myAudio.addEventListener('ended', function() {
-		this.currentTime = 0;
-		this.play();
-	}, false);
-	//	myAudio.play();
 	$soundControl.click(function() {
 		if (myAudio.paused) {
 			myAudio.play();
@@ -80,6 +44,32 @@ $(function() {
 		}
 		$(this).toggleClass("muted");
 	});
+
+	// audio looop, background sound
+	var myAudio = new Audio('bin/BasicSound.mp3');
+	myAudio.addEventListener('ended', function() {
+		this.currentTime = 0;
+		this.play();
+	}, false);
+	//	myAudio.play();
+
+	$container.append($storeBar);
+	$storeBar
+		.mouseenter(function() {
+			$storeBar.addClass('open');
+		})
+		.mouseleave(function() {
+			$storeBar.removeClass('open')
+		})
+		.on('click', 'a', function(e) {
+			e.preventDefault();
+			$storeBar.find('ul').hide('fast');
+			$storeBar.find($(this).data('for')).show('fast');
+			$storeBar.find('a').removeClass('selected');
+			$(this).addClass('selected');
+		})
+		// preselect first tab
+		.find('a').first().click();
 
 	(function() {
 		var magic = 1.15; // Faktor um den sich die Kosten bei jedem Upgrade erhöhen -> Balance this first!
@@ -110,51 +100,55 @@ $(function() {
 		// here are hardware items we got
 		var hardwareLib = {
 			_auge: ['bin/auge1.png','bin/auge2.png','bin/auge3.png','bin/auge4.png','bin/auge5.png','bin/auge6.png','bin/auge7.png','bin/auge8.png'], //not placeable
-			_shop: ['bin/infocoin.png'], //not placeable
+			_store: ['bin/infocoin.png'], //not placeable
 			_news: ['bin/idaily.png'], //not placeable
 			_hackman: ['bin/Hackbuddy.png'], //not placeable
 			_lamp: ['bin/lampe.png'], //not placeable
 			_noise: ['bin/rauschen01.gif','bin/rauschen02.gif','bin/rauschen03.gif','bin/rauschen04.gif'], //not placeable
 			_lamp_noise: ['bin/lamp-noise.gif'], //not placeable
-			pc: ['bin/Rechner01.png'],
+			pc_left: ['bin/Rechner01links.png'],
+			pc_right: ['bin/Rechner01rechts.png'],
 			display: ['bin/Display01.png','bin/Display02.png','bin/Display03.png','bin/Display04.png'],
 			router: ['bin/router1.png','bin/router2.png','bin/router3.png','bin/router4.png','bin/router5.png'],
 			vpn: ['bin/vpn1.png','bin/vpn2.png','bin/vpn3.png','bin/vpn4.png','bin/vpn5.png'],
-			server: ['bin/Server01.png', 'bin/Server02.png']
+			server: ['bin/Server1.png', 'bin/Server2.png','bin/Server3.png','bin/Server4.png','bin/Server5.png','bin/Server6.png','bin/Server7.png','bin/Server8.png','bin/Server9.png']
 		};
 
 		//this is the chosen final layout, made by Joan
 		var layout = [
-			{ type: 'display', level: 2, pos: [380,-70] }, // iDaily
-			{ type: 'display', level: 2, pos: [-380,-70] },
+			//{ type: '_lamp', level: 0, pos: [0,-650] },
+			{ type: '_hackman', level: 0, pos: [0,100], z: 99999, id: 'hackman' },
+			{ type: 'display', level: 0, pos: [0,-70], id: 'start-display' },
+			{ type: 'display', level: 2, pos: [380,-70], id: 'store-display' },
+			{ type: 'display', level: 2, pos: [-380,-70], },
 			{ type: 'display', level: 2, pos: [-190,-270] },
 			{ type: 'display', level: 2, pos: [190,-270] },
 			{ type: 'display', level: 2, pos: [-570,-270] },
 			{ type: 'display', level: 2, pos: [570,-270] },
 			{ type: 'display', level: 2, pos: [-380,-470] },
 			{ type: 'display', level: 2, pos: [570,-470] },
-			{ type: 'server', level: 0, pos: [-870,-50] },
-			{ type: 'server', level: 0, pos: [-1070,-50] },
-			{ type: 'pc', level: 0, pos: [-690,155] },
-			{ type: 'pc', level: 0, pos: [690,155] },
-			{ type: 'pc', level: 0, pos: [850,155] },
+			{ type: 'pc_left', level: 0, pos: [-690,110], z:6 },
+			{ type: 'server', level: 0, pos: [-870,-50], z:5 },
+			{ type: 'server', level: 0, pos: [-1070,-50], z:4 },
+			{ type: 'pc_right', level: 0, pos: [690,110], z:2 },
+			{ type: 'pc_right', level: 0, pos: [850,110], z:1 },
 			{ type: 'router', level: 0, pos: [-800,450] },
 			{ type: 'vpn', level: 0, pos: [550,380] },
 			{ type: '_auge', level: 0, pos: [570,-470] },
-			//{ type: '_shop', level: 0, pos: [-380,-470] },
-			{ type: '_news', level: 0, pos: [380,-70] }
+			{ type: '_store', level: 0, pos: [380,-70], id: 'store' },
+			{ type: '_news', level: 0, pos: [-380,-470] }
 			//{ type: 'vpn', level: 4, pos: [-1000,450] }
 		];
 
-		//this pieces of hardware should be placed on game initialization
-		var placedHardware = [
-			{ type: '_hackman', level: 0, pos: [0,100] },
-			{ type: '_lamp', level: 0, pos: [0,-650] },
-			{ type: 'display', level: 0, pos: [0,-70] }
-		];
+		var placedHardware = [];
+
+		placeHardware('_hackman');
+		placeHardware('display');
 
 		var infos = [
-			{ item: '_hackman', content: '', mouseover: '<p>This is you a.k.a. &lsquo; The Hackman &rsquo;</p><p><ul><li>i: '+stats.info.value+'</li><li>i/S:  '+stats.ips.value+'</li></ul></p>'}
+			{ item: 'hackman', content: '', mouseover: '<p>This is you a.k.a. &lsquo; The Hackman &rsquo;</p>'},
+			{ item: 'start-display', content: '', mouseover: ''},
+			{ item: 'store-display', content: '', mouseover: 'store'},
 		]
 
 		function gameLoop() {
@@ -179,6 +173,7 @@ $(function() {
 		function updateGUI() {
 			//information counter
 			$informationField.text(Math.round(stats.info.value));
+			$informationField2.text($informationField.text());
 
 			//enable/disable upgrades
 			toggleUpgrade();
@@ -237,13 +232,13 @@ $(function() {
 
 		setInterval(gameLoop, tick);
 
-		$shopBar.find('ul.hardware').append(Object.keys(hardwareLib).map(function(key) {
+		$storeBar.find('ul.hardware').append(Object.keys(hardwareLib).map(function(key) {
 			if(key.charAt(0) != '_') //don't show the 'not placeables'
 			return $('<li>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1) + ''}).click(function() {
 				placeHardware(key);
 			});
 		}));
-		$shopBar.find('ul.software').append(Object.keys(levels).map(function(key) {
+		$storeBar.find('ul.software').append(Object.keys(levels).map(function(key) {
 			return $('<li>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1) + ' <div class="upgrade-level">Level <span id="u_'+key+'">0</span></div><br>'}).click(function() {
 				upgrade(key);
 			});
@@ -251,12 +246,6 @@ $(function() {
 		Object.keys(levels).forEach(function(type) {
 			redrawUpgrade(type);
 		});
-
-
-		for(var i = 0; i < placedHardware.length; i++) {
-			showHardware(i);
-		}
-
 
 		function showHardware(i) {
 			var scale = window.innerHeight/1550;
@@ -266,25 +255,27 @@ $(function() {
 			var img = new Image();
 			img.src = hardwareLib[placedHardware[i]['type']][placedHardware[i]['level']];
 			img.onload = function() { //falls unser Spiel mal Arsch langsam wird, hier kann man was optimieren
-				if(placedHardware[i]['type'] == '_hackman' ) zindex = 99999;
-				else if(['display', '_lamp-noise'].indexOf(placedHardware[i]['type']) != -1 ) zindex = currentLayer+=2;
+				
+				if(placedHardware[i]['z'] !== 'undefined') zindex = placedHardware[i]['z'];
+				//else if(['display', '_lamp-noise'].indexOf(placedHardware[i]['type']) != -1 ) zindex = currentLayer+=2;
 				else zindex = currentLayer++;
 				
-				if(placedHardware[i]['type'] == '_lamp' ) {
-					var $noise = $('<img>', {
-						src: hardwareLib['_lamp_noise'][0],
-						css: {	
-							width: 48*scale+ 'px',
-							position: 'absolute',
-							left: h_mid+placedHardware[i]['pos'][0]*scale-74*scale+img.width*scale/2 + 'px',
-							top: v_mid+placedHardware[i]['pos'][1]*scale-60*scale+img.height*scale/2 + 'px',
-							'z-index': zindex-1
-						},
-						'class': 'noise'
-					});
-					$container.append($noise);
-				}
+				// if(placedHardware[i]['type'] == '_lamp' ) {
+				// 	var $noise = $('<img>', {
+				// 		src: hardwareLib['_lamp_noise'][0],
+				// 		css: {	
+				// 			width: 48*scale+ 'px',
+				// 			position: 'absolute',
+				// 			left: h_mid+placedHardware[i]['pos'][0]*scale-74*scale+img.width*scale/2 + 'px',
+				// 			top: v_mid+placedHardware[i]['pos'][1]*scale-60*scale+img.height*scale/2 + 'px',
+				// 			'z-index': zindex-1
+				// 		},
+				// 		'class': 'noise'
+				// 	});
+				// 	$container.append($noise);
+				// }
 
+				// add noise to all Displays
 				if(['display'].indexOf(placedHardware[i]['type']) != -1 ) {
 					var $noise = $('<img>', {
 						src: hardwareLib['_noise'][rand(0,3)],
@@ -302,16 +293,22 @@ $(function() {
 				}
 
 
-				var $hw = $('<img>', {
-					src: img.src,
-					css: {	
+
+				//this are the poperties of every hardware item
+				var $hw = $('<div>', {
+					css: {
+						'background-image': 'url('+img.src+')',
+						'background-size': img.width*scale+'px ' + img.height*scale+'px',
 						width: img.width*scale+ 'px',
+						height: img.height*scale+ 'px',
 						position: 'absolute',
 						left: h_mid+placedHardware[i]['pos'][0]*scale-img.width*scale/2 + 'px',
 						top: v_mid+placedHardware[i]['pos'][1]*scale-img.height*scale/2 + 'px',
+						'font-size': img.width*scale/12+ 'px',
 						'z-index': zindex
 					},
-					'class': placedHardware[i]['type'],
+					id: placedHardware[i]['id'],
+					'class': placedHardware[i]['type']+placedHardware[i]['level'],
 					'data-id': i,
 					'data-type': placedHardware[i]['type']
 				});
@@ -320,8 +317,20 @@ $(function() {
 						upgradeHardware($(this));
 					});
 				}
-				$hw.mouseenter(function () { showInfos($(this)); });
-				$hw.mouseleave(function () { $container.find("[data-id='popup-" + $hw.data('id') +"']").remove(); });
+				//text inside displays
+				$hw.html(function () {showInfos($(this)) });
+
+				//popups
+				$hw.mouseenter(function () { showInfos($(this),true); });
+				
+				switch (placedHardware[i]['id']) {
+					case 'store-display': {
+						placeHardware('_store');
+						break;
+					}
+					default: break;
+				}
+
 				$container.append($hw);
 			}
 		}
@@ -330,30 +339,79 @@ $(function() {
 			if(placedHardware[hw.data('id')]['level']+1 < hardwareLib[placedHardware[hw.data('id')]['type']].length) {
 				placedHardware[hw.data('id')]['level']++;
 				hw.remove();
+				$container.find(".popup").remove();
 				$container.find("[data-id='noise-" + hw.data('id') +"']").remove();
 				showHardware(hw.data('id'));
 			}
 			else console.log(placedHardware[hw.data('id')]['type']+"max upgrade reached (Level "+placedHardware[hw.data('id')]['level']+")");
 		}
 
-		function showInfos(hw) {
-			var result = infos.filter(function (infos) { return infos.item == hw.data('type') });
-			$popup = $('<div>', {
-				'class': 'popup',
-				html: '<p>'+result[0].mouseover+'</p>',
-				css: {
-					top: hw.position()['top'],
-					left: hw.position()['left']+hw.width()
-				},
-				'data-id': 'popup-'+hw.data('id')
-			});
-			$container.append($popup);
+		function showInfos(hw,popup) {
+			if(typeof popup === 'undefined') { popup = false; } //js hat keine echten optionalen parameter?!
+			switch(hw[0].id) {
+				case 'store' : 			{var result = infos.filter(function (infos) { return infos.item == 'store-display' });break;}
+				case 'start-display' : 	{var result = infos.filter(function (infos) { return infos.item == 'hackman' });break;}
+				default: 				{var result = infos.filter(function (infos) { return infos.item == hw[0].id });break;}
+			}
+			if(result.length > 0) {
+				hw.html(result[0].content);
+				
+				var top = 0, left = 0;
+				switch(hw[0].id) {
+					case 'start-display' : {
+						hw.append($informationField);
+						//dirty workaround to position the popup of the start-display to position of the hackman popup
+						top = $('#hackman').position()['top']-$('#hackman').height()/4;
+						left = $('#hackman').position()['left']+$('#hackman').width()-5;
+						break;
+					}
+					default : {
+						top = hw.position()['top']-hw.height()/4;
+						left = hw.position()['left']+hw.width()-5;
+						break;
+					}
+				}
+
+				if(popup) {
+					console.log(hw);
+					$popup = $('<div>', {
+						'class': 'popup',
+						html: result[0].mouseover,
+						css: {
+							top: top+'px',
+							left: left+'px',
+							'z-index': hw[0]['style']['zIndex']-1
+						},
+						'data-id': 'popup-'+hw.data('id')
+					});
+
+					switch(hw[0].id) {
+						case 'start-display' :
+						case 'hackman' : {
+							$popup.append($informationField2);
+							$popup.append($soundControl);
+							break;
+						}
+						default : break;
+					}
+
+					$container.find(".popup").remove();
+					$container.append($popup);
+				}
+			}
 		}
 
 		function rand (min, max) {
 			return Math.floor(Math.random() * (max - min + 1)) + min;
 		}		
 
+		$(window).resize(function() {
+			console.log('resolution change');
+			$container.html('');
+			for(var i = 0; i < placedHardware.length; i++) {
+				showHardware(i);
+			}
+		});		
 	})();
 
 
@@ -402,7 +460,9 @@ $(function() {
 
 			stats.info.value += value;
 			$informationField.text(Math.round(stats.info.value));
-			var text = '+' + String(value);
+			$informationField2.text($informationField.text());
+			var offset = $('#hackman').position(),
+				text = '+' + String(value);
 
 			if (keyword) text += ' - ' + keyword;
 
@@ -411,8 +471,8 @@ $(function() {
 				'class': 'information-up',
 				css: {
 					position: 'absolute',
-					left: '50vw',
-					top: '50vh',
+					left: String(offset.left + 50) + 'px',
+					top: String(offset.top) + 'px',
 					'z-index': 99997
 				}
 			});
