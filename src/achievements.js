@@ -15,11 +15,10 @@
 		count: 0,
 		list: {
 			'start': {title: 'Good start', text: 'Wow, very type!'},
-			'type': {title: 'Typegod', needed: 1000, text: 'I have no idea what I\'m doing'},
-			'typemax': {title: 'Charmillionaire', needed: 1000000, text: 'If keys were dollars, you\'d be rich'},
+			'type': {title: 'Typegode', needed: 1000, text: 'I have no idea what I\'m doing'},
+			'typemax': {title: 'Charmillionaire', needed: 1000000, text: 'If chars were dollars, you\'d be rich'},
 			'store': {title: 'Shopping Queen', text: 'Great Job, you maxed out your display upgrades! <br/> Let\'s buy some new stuff...', image: 'store.png'},
 			'riddler': {title: 'Riddler', text: 'Or should that be Googler?', needed: 9},
-			'f': {secret: true},
 			'g': {secret: true},
 			'h': {secret: true},
 			'i': {secret: true},
