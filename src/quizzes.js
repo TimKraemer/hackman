@@ -45,7 +45,7 @@
 					var isCorrect = i == data.correct,
 						$answer = $('<div>', {class: 'answer', text: data.answers[i]}).click(function() {
 							if (disabled) return;
-							if (!$answer.hasClass('selected')) {
+							if (false && !$answer.hasClass('selected')) {
 								$answers.find('*').removeClass('selected');
 								$answer.addClass('selected');
 								return;
