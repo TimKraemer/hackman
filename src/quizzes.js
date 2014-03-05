@@ -22,6 +22,28 @@
 				question: 'Application security wise, when is user input to be trusted?',
 				answers: ['Always', 'Never', 'After authentication' , 'Plaintext input'],
 				correct: 1
+			},
+			{
+				question: 'Under which nickname is John Thomas Draper known best?',
+				answers: ['Phantom Phreak','Cereal Killer','Notch','Captain Crunch'],
+				correct: 3
+			},
+			{
+				question: 'What is Robbert Tappan Morris best known for? He ist best known for...',
+				answers: ['...takeover of all of the telephone lines for Los Angeles radio station KIIS-FM',
+					'...creating a Worm, considered the first computer worm on the Internet',
+					'...beeing a video game programmer','...beeing a founder of Sun Microsystems'],
+				correct: 1
+			},
+			{
+				question: 'Who hacked into the bank network SWIFT and transferred 10.7 Mio US$ to accounts set up by accomplices abroad',
+				answers: ['Kevin Poulsen','George Francis Hotz','Vladimir Levin','L. Rafael Reif'],
+				correct: 2
+			},
+			{
+				question: 'Who was a founder of WikiLeaks?',
+				answers: ['Notch','Fastjack','Mendax','Pyro'],
+				correct: 2
 			}
 		],
 		showRandom: function() {

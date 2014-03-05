@@ -92,8 +92,6 @@ $(function() {
 			]
 		};
 
-		stats.info.value = 500000000;
-
 		// current level of upgrades per ware
 		var levels = {
 			"script": 		0
@@ -504,7 +502,6 @@ $(function() {
 
 		document.onkeydown = function(e) {
 			achvs.trigger('start');
-			achvs.progress('type', 1);
 			e = e || window.event;
 			var charCode = e.which || e.keyCode,
 				charTyped = String.fromCharCode(charCode),
@@ -525,6 +522,8 @@ $(function() {
 
 			if (keyAlreadyDown && !keyword) return;
 			keyAlreadyDown = true;
+
+			achvs.progress('type', 1);
 
 			stats.info.value += value;
 			$informationField.text(Math.round(stats.info.value));
