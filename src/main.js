@@ -346,7 +346,7 @@ $(function() {
 						break;
 					}
 					case 'store':
-					case 'store2': {
+					case 'store2':
 						$hw.click(function() {
 							$container.find(".popup").remove();
 							$container.append($store);
@@ -360,8 +360,6 @@ $(function() {
 									}
 								});
 						});
-					}
-					default: break;
 				}
 				$container.find(".big-popup").remove();
 				$container.append($hw);
@@ -453,19 +451,17 @@ $(function() {
 					$popup.append($upgradeButton);
 					switch(hw[0].id) {
 						case 'start-display' :
-						case 'hackman' : {
+						case 'hackman' :
 							$popup.append($informationFieldIcon);
 							$upgradeButton.click(function() { upgradeHardware($('#start-display')) });	//FIXME: references start-display, which may not have been loaded yet
 							$popup.append($soundControl);
 							break;
-						}
-						case 'store' : {
-							$upgradeButton.click(function() { upgradeHardware($('#store-display')) });	//FIXME: references start-display, which may not have been loaded yet					
-						}
-						default : {
+						case 'store' :
+							$upgradeButton.click(function() { upgradeHardware($('#store-display')) });	//FIXME: references start-display, which may not have been loaded yet
+							break;
+						default :
 							$upgradeButton.click(function() { upgradeHardware(hw) });
 							break;
-						}
 					}
 
 					$container.find(".popup").remove();
