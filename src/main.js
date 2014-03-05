@@ -90,6 +90,7 @@ $(function() {
 							{base: 5000,	ips: 10,	aware: 20	}
 			]
 		};
+		stats.info.value += 50000;
 
 		// current level of upgrades per ware
 		var levels = {
@@ -245,15 +246,17 @@ $(function() {
 		setInterval(gameLoop, tick);
 
 		$store.find('table#hardware-table').append(Object.keys(hardwareLib).map(function(key) {
-			if(key.charAt(0) != '_') //don't show the 'not placeables'
-			return $('<tr>').append( [ $('<td>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1)}), $('<td>', {id: 'u_'+key, text: '0'}) ]).click(function() {
-				placeHardware(key);
-			});
+			//don't show the 'not placeables'
+			if(key.charAt(0) != '_') return $('<tr>').append([
+				$('<td>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1)}),
+				$('<td>', {id: 'u_'+key, text: '0'})
+			]);
 		}));
 		$store.find('table#software-table').append(Object.keys(levels).map(function(key) {
-			return $('<tr>').append( [ $('<td>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1)}), $('<td>', {id: 'u_'+key, text: '0'}) ]).click(function() {
-				upgrade(key);
-			});
+			return $('<tr>').append([
+				$('<td>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1)}),
+				$('<td>', {id: 'u_'+key, text: '0'})
+			]);
 		}));
 		Object.keys(levels).forEach(function(type) {
 			redrawUpgrade(type);
@@ -342,13 +345,20 @@ $(function() {
 						break;
 					}
 					case 'store':
-					case 'store2': {
+					case 'store2':
 						$hw.click(function() {
 							$container.find(".popup").remove();
 							$container.append($store);
+							$store
+								.on('click', 'table td', function() {
+									var key = $(this).attr('id');
+									if ($(this).closest('table').attr('id') == 'hardware-table') {
+										placeHardware(key);
+									} else {
+										upgrade(key);
+									}
+								});
 						});
-					}
-					default: break;
 				}
 				$container.find(".big-popup").remove();
 				$container.append($hw);
@@ -372,15 +382,18 @@ $(function() {
 			stats.info.value -= cost.base;
 			levels[hw.data('type')]++;
 
-			if(placedHardware[hw.data('id')]['level']+1 < hardwareLib[placedHardware[hw.data('id')]['type']].length) {
-				placedHardware[hw.data('id')]['level']++;
+			var tempHw = placedHardware[hw.data('id')];
+
+			if(tempHw['level']+1 < hardwareLib[tempHw['type']].length) {
+				tempHw['level']++;
+				if (tempHw['level']+1 >= hardwareLib[tempHw['type']].length) $upgradeButton.hide();
 				hw.remove();
 				//$container.find(".popup").remove();
 				$container.find("[data-id='noise-" + hw.data('id') +"']").remove();
 				showHardware(hw.data('id'));
 
 				//when start-display reached level 4 give us an additional display
-				if(hw[0]['id'] == 'start-display' && placedHardware[hw.data('id')]['level'] == 3) {
+				if(hw[0]['id'] == 'start-display' && tempHw['level'] == 3) {
 					
 					function upgradequiz() {
 						quizzes.showRandom().then(function(isCorrect) {
@@ -441,21 +454,19 @@ $(function() {
 					$popup.append($upgradecosts);
 					switch(hw[0].id) {
 						case 'start-display' :
-						case 'hackman' : {
+						case 'hackman' :
 							$popup.append($informationFieldIcon);
 							
 
 							$upgradeButton.click(function() { upgradeHardware($('#start-display')) });	//FIXME: references start-display, which may not have been loaded yet
 							$popup.append($soundControl);
 							break;
-						}
-						case 'store' : {
-							$upgradeButton.click(function() { upgradeHardware($('#store-display')) });	//FIXME: references start-display, which may not have been loaded yet					
-						}
-						default : {
+						case 'store' :
+							$upgradeButton.click(function() { upgradeHardware($('#store-display')) });	//FIXME: references start-display, which may not have been loaded yet
+							break;
+						default :
 							$upgradeButton.click(function() { upgradeHardware(hw) });
 							break;
-						}
 					}
 
 					$container.find(".popup").remove();
