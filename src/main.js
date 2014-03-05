@@ -385,15 +385,18 @@ $(function() {
 			stats.info.value -= cost.base;
 			levels[hw.data('type')]++;
 
-			if(placedHardware[hw.data('id')]['level']+1 < hardwareLib[placedHardware[hw.data('id')]['type']].length) {
-				placedHardware[hw.data('id')]['level']++;
+			var tempHw = placedHardware[hw.data('id')];
+
+			if(tempHw['level']+1 < hardwareLib[tempHw['type']].length) {
+				tempHw['level']++;
+				if (tempHw['level']+1 >= hardwareLib[tempHw['type']].length) $upgradeButton.hide();
 				hw.remove();
 				//$container.find(".popup").remove();
 				$container.find("[data-id='noise-" + hw.data('id') +"']").remove();
 				showHardware(hw.data('id'));
 
 				//when start-display reached level 4 give us an additional display
-				if(hw[0]['id'] == 'start-display' && placedHardware[hw.data('id')]['level'] == 3) {
+				if(hw[0]['id'] == 'start-display' && tempHw['level'] == 3) {
 					
 					function upgradequiz() {
 						quizzes.showRandom().then(function(isCorrect) {
