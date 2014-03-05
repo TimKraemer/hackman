@@ -52,6 +52,8 @@ $(function() {
 		achvs = new Achievements(),
 		quizzes = new Quizzes();
 
+	achvs.showAll();
+
 	$informationFieldIcon.append($informationField2);
 	$soundControl.click(function() {
 		if (myAudio.paused) {
@@ -504,7 +506,6 @@ $(function() {
 
 		document.onkeydown = function(e) {
 			achvs.trigger('start');
-			achvs.progress('type', 1);
 			e = e || window.event;
 			var charCode = e.which || e.keyCode,
 				charTyped = String.fromCharCode(charCode),
@@ -525,6 +526,8 @@ $(function() {
 
 			if (keyAlreadyDown && !keyword) return;
 			keyAlreadyDown = true;
+
+			achvs.progress('type', 1);
 
 			stats.info.value += value;
 			$informationField.text(Math.round(stats.info.value));

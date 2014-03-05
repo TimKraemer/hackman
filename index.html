@@ -83,15 +83,6 @@
 			height: 1vh;
 		}
 
-		.achievements {
-			background-color: rgba(255, 0, 0, .8);
-		}
-
-		.achievements img {
-			width: 5em;
-			height: 5em;
-		}
-
 		.popup {
 			position:absolute;
 			width:125px;
@@ -176,6 +167,40 @@
 
 		.question-popup .incorrect {
 			background-color: darkred;
+		}
+
+		.achievements {
+			background-color: rgba(0, 0, 0, .8);
+		}
+
+		.achievements > .container {
+			background-image: url('bin/grid.png');
+			background-size: 61em;
+			padding-left: 0.2em;
+			padding-top: 0;
+			width: 48em;
+		}
+
+		.achievements .info {
+			background-color: rgba(69, 69, 69, 1);
+			border-radius: 1em;
+			padding: 0 1em 1em;
+		}
+
+		.achievements img.first {
+			padding-top: .1em;
+		}
+
+		.achievements img {
+			width: 6.3em;
+			height: 6.3em;
+			margin-right: 1.1em;
+			padding-top: .5em;
+		}
+
+		.achievements img:not(.triggered) {
+			filter: gray;
+			-webkit-filter: grayscale(1);
 		}
 	</style>
 	<script type="text/javascript" src="libs/jquery.js"></script>
