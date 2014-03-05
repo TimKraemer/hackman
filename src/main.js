@@ -34,7 +34,6 @@ $(function() {
 		$informationField = $('<p>', {text: '0', css: {'position':'absolute', 'top':'0', 'left':'0'}}),
 		$informationField2 = $('<p>', {text: '0', css: {'float': 'left', 'padding': '2px 0 0 14px'}}),
 		$informationFieldIcon = $('<div>', {css: {height: '15px', width: '30px', 'background-image': 'url("bin/infocoin.png")', 'background-size': '1em', 'background-repeat': 'no-repeat', 'margin': '1em 0 0 2.5em', 'padding': '0 0 0 0.3em'}}),
-		$upgradeButton = $('<p>', {html: '<img src="bin/upgrade.png" width="30px" /><br/><span class="small">Upgrade</span>', css: {'float':'right'}}),
 		$store = $('<div>', {'class': 'big-popup store-popup', html: ' <h2 style="text-align:center">store</h2> \
 																		<table id="hardware-table">				\
 																			<thead><tr>							\
@@ -413,7 +412,7 @@ $(function() {
 					case 'start-display' : {
 						hw.append($informationField);
 						//dirty workaround to position the popup of the start-display to position of the hackman popup
-						top = $('#hackman').position()['top']-$('#hackman').height();
+						top = $('#hackman').position()['top']-$('#hackman').height()*(225/$('#hackman').height())+$('#hackman').height()/2;
 						left = $('#hackman').position()['left']+$('#hackman').width()/1.3;
 						break;
 					}
@@ -425,7 +424,7 @@ $(function() {
 				}
 
 				if(popup) {
-					$popup = $('<div>', {
+					var $popup = $('<div>', {
 						'class': 'popup',
 						html: result[0].mouseover,
 						css: {
@@ -435,11 +434,17 @@ $(function() {
 						'data-id': 'popup-'+hw.data('id')
 					});
 
-					$popup.append($upgradeButton);
+					var $upgradecosts = $('<p>', {html: '<span class="small" id="u_'+hw.data('id')+'">0</small><br/>', css: {'float':'right', 'text-align':'center', 'margin':'0'}});
+					var $upgradeButton = $('<img>', {src: 'bin/upgrade.png', css: {'width':"30px"}});
+					var $upgradeCaption = $('<span>', {'class': 'small', text: 'Upgrade'});
+					$upgradecosts.append([$upgradeButton,'<br/>',$upgradeCaption]);
+					$popup.append($upgradecosts);
 					switch(hw[0].id) {
 						case 'start-display' :
 						case 'hackman' : {
 							$popup.append($informationFieldIcon);
+							
+
 							$upgradeButton.click(function() { upgradeHardware($('#start-display')) });	//FIXME: references start-display, which may not have been loaded yet
 							$popup.append($soundControl);
 							break;
