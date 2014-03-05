@@ -35,7 +35,19 @@ $(function() {
 		$informationField2 = $('<p>', {text: '0', css: {'float': 'left', 'padding': '2px 0 0 14px'}}),
 		$informationFieldIcon = $('<div>', {css: {height: '15px', width: '30px', 'background-image': 'url("bin/infocoin.png")', 'background-size': '15px', 'background-repeat': 'no-repeat', 'margin': '0 0 0 15px', 'padding': '0 0 0 3px'}}),
 		$upgradeButton = $('<p>', {html: '<img src="bin/upgrade.png" width="30px">', css: {'float':'right'}}),
-		$storeBar = $container.find('.store'),
+		$store = $('<div>', {'class': 'big-popup store-popup', html: ' <h2 style="text-align:center">store</h2> \
+																		<table id="hardware-table">				\
+																			<thead><tr>							\
+																				<th>Hardware</th>				\
+																				<th>Kosten</th>					\
+																			</tr></thead>						\
+																		</table>								\
+																		<table id="software-table">				\
+																			<thead><tr>							\
+																				<th>Software</th>				\
+																				<th>Level</th>					\
+																			</tr></thead>						\
+																		</table>'}),
 		muted = false,
 		achvs = new Achievements(),
 		quizzes = new Quizzes();
@@ -58,24 +70,6 @@ $(function() {
 		this.play();
 	}, false);
 		myAudio.play();
-
-	$container.append($storeBar);
-	$storeBar
-		.mouseenter(function() {
-			$storeBar.addClass('open');
-		})
-		.mouseleave(function() {
-			$storeBar.removeClass('open')
-		})
-		.on('click', 'a', function(e) {
-			e.preventDefault();
-			$storeBar.find('ul').hide('fast');
-			$storeBar.find($(this).data('for')).show('fast');
-			$storeBar.find('a').removeClass('selected');
-			$(this).addClass('selected');
-		})
-		// preselect first tab
-		.find('a').first().click();
 
 	(function() {
 		var magic = 1.15; // Faktor um den sich die Kosten bei jedem Upgrade erhöhen -> Balance this first!
@@ -164,7 +158,7 @@ $(function() {
 		var infos = [
 			{ item: 'hackman', content: '', mouseover: '<p>This is you &lsquo; The Hackman &rsquo;</p>'},
 			{ item: 'start-display', content: '', mouseover: ''},
-			{ item: 'store-display', content: '', mouseover: '<p>This is the store, buy all the things!!1</p>'},
+			{ item: 'store-display', content: '', mouseover: '<p>This is the store, klick on it to buy all the things!!1</p>'}
 		]
 
 		function gameLoop() {
@@ -254,14 +248,14 @@ $(function() {
 
 		setInterval(gameLoop, tick);
 
-		$storeBar.find('ul.hardware').append(Object.keys(hardwareLib).map(function(key) {
+		$store.find('table#hardware-table').append(Object.keys(hardwareLib).map(function(key) {
 			if(key.charAt(0) != '_') //don't show the 'not placeables'
-			return $('<li>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1) + ''}).click(function() {
+			return $('<tr>').append( [ $('<td>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1)}), $('<td>', {id: 'u_'+key, text: '0'}) ]).click(function() {
 				placeHardware(key);
 			});
 		}));
-		$storeBar.find('ul.software').append(Object.keys(levels).map(function(key) {
-			return $('<li>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1) + ' <div class="upgrade-level">Level <span id="u_'+key+'">0</span></div><br>'}).click(function() {
+		$store.find('table#software-table').append(Object.keys(levels).map(function(key) {
+			return $('<tr>').append( [ $('<td>', {id: key, html: key.charAt(0).toUpperCase() + key.slice(1)}), $('<td>', {id: 'u_'+key, text: '0'}) ]).click(function() {
 				upgrade(key);
 			});
 		}));
@@ -351,9 +345,15 @@ $(function() {
 						placeHardware('_store');
 						break;
 					}
+					case 'store': {
+						$hw.click(function() {
+							$container.find(".popup").remove();
+							$container.append($store);
+						});
+					}
 					default: break;
 				}
-
+				$container.find(".big-popup").remove();
 				$container.append($hw);
 			}
 		}
@@ -374,8 +374,17 @@ $(function() {
 
 				//when start-display reached level 4 give us an additional display
 				if(hw[0]['id'] == 'start-display' && placedHardware[hw.data('id')]['level'] == 3) {
-					placeHardware('display');
-					achvs.trigger('store');
+					
+					function upgradequiz() {
+						quizzes.showRandom().then(function(isCorrect) {
+							if(isCorrect) {
+								placeHardware('display');
+								achvs.trigger('store');
+							}
+							else upgradequiz();
+						});						
+					}
+					upgradequiz();
 				}
 			}
 			else console.log(placedHardware[hw.data('id')]['type']+"max upgrade reached (Level "+placedHardware[hw.data('id')]['level']+")");
@@ -384,9 +393,9 @@ $(function() {
 		function showInfos(hw,popup) {
 			if(typeof popup === 'undefined') { popup = false; } //js hat keine echten optionalen parameter?!
 			switch(hw[0].id) {
-				case 'store' : 			{var result = infos.filter(function (infos) { return infos.item == 'store-display' });break;}
-				case 'start-display' : 	{var result = infos.filter(function (infos) { return infos.item == 'hackman' });break;}
-				default: 				{var result = infos.filter(function (infos) { return infos.item == hw[0].id });break;}
+				case 'store' : case 'store2' :	{var result = infos.filter(function (infos) { return infos.item == 'store-display' });break;}
+				case 'start-display' : 			{var result = infos.filter(function (infos) { return infos.item == 'hackman' });break;}
+				default: 						{var result = infos.filter(function (infos) { return infos.item == hw[0].id });break;}
 			}
 			if(result.length > 0) {
 				hw.html(result[0].content);
@@ -396,13 +405,13 @@ $(function() {
 					case 'start-display' : {
 						hw.append($informationField);
 						//dirty workaround to position the popup of the start-display to position of the hackman popup
-						top = $('#hackman').position()['top']-$('#hackman').height()/4;
-						left = $('#hackman').position()['left']+$('#hackman').width()-5;
+						top = $('#hackman').position()['top']-115/1.7;
+						left = $('#hackman').position()['left']+$('#hackman').width()/1.3;
 						break;
 					}
 					default : {
-						top = hw.position()['top']-hw.height()/4;
-						left = hw.position()['left']+hw.width()-5;
+						top = hw.position()['top']-115/1.7;
+						left = hw.position()['left']+hw.width()/1.3;
 						break;
 					}
 				}
@@ -423,12 +432,12 @@ $(function() {
 						case 'start-display' :
 						case 'hackman' : {
 							$popup.append($informationFieldIcon);
-							$upgradeButton.click(function() { upgradeHardware($('#start-display')) }); //FIXME: references start-display, which may not have been loaded yet
+							$upgradeButton.click(function() { upgradeHardware($('#start-display')) });	//FIXME: references start-display, which may not have been loaded yet
 							$popup.append($soundControl);
 							break;
 						}
 						case 'store' : {
-							$upgradeButton.click(function() { upgradeHardware($('#store-display')) });		//FIXME: references start-display, which may not have been loaded yet					
+							$upgradeButton.click(function() { upgradeHardware($('#store-display')) });	//FIXME: references start-display, which may not have been loaded yet					
 						}
 						default : {
 							$upgradeButton.click(function() { upgradeHardware(hw) });
@@ -448,7 +457,10 @@ $(function() {
 
 
 		$container.click(function(e) {
-			if(e.target == $('#game-container')[0]) $container.find(".popup").remove();
+			if(e.target == $('#game-container')[0]) {
+				$container.find(".popup").remove();
+				$container.find(".big-popup").remove();
+			}
 		});
 
 		$(window).resize(function() {

@@ -39,51 +39,6 @@
 			background: url(bin/glyphicons_183_volume_down.png) no-repeat left top;
 		}
 
-		.store {
-			position: absolute;
-			background-color: rgba(255, 255, 255, .3);
-			top: 0;
-			right: 0;
-			height: 600px;
-			z-index: 99995;
-			width: 20px;
-			overflow: hidden;
-			transition: width 400ms;
-		}
-
-		.store.open {
-			width: 200px;
-		}
-
-		.store h2 {
-			opacity: 1;
-			transition: all 400ms;
-		}
-
-		.store:not(.open) h2 {
-			-webkit-transform: rotate(-90deg);
-			-moz-transform: rotate(-90deg);
-			-ms-transform: rotate(-90deg);
-			-o-transform: rotate(-90deg);
-			transform: rotate(-90deg);
-
-			/* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
-			-webkit-transform-origin: 50% 50%;
-			-moz-transform-origin: 50% 50%;
-			-ms-transform-origin: 50% 50%;
-			-o-transform-origin: 50% 50%;
-			transform-origin: 50% 50%;
-
-			position: relative;
-			top: 40px;
-
-		}
-
-		.store.open h2 {
-			position: relative;
-			top: 0px;
-		}
-
 		.upgrade-level {
 			font-style: italic;
 			color: #141414;
@@ -94,45 +49,11 @@
 			color: lightgrey;
 		}
 
-		.store > .content {
-			white-space: nowrap;
-			opacity: 0;
-			transition: opacity 400ms;
-		}
-
-		.store.open > .content {
-			opacity: 1;
-		}
-
-		.store .label {
-			opacity: 1;
-			transition: opacity 400ms;
-		}
-
-		.store.open .label {
-			opacity: 0;
-		}
-
-		.store a {
-			color: white;
-			text-decoration: none;
-			margin: 0 3px;
-		}
-
-		.store a.selected {
-			font-weight: bold;
-			border-bottom: 2px solid red;
-		}
-
-		.store .items {
-			list-style: none;
-			display: none;
-		}
-
 		.achievement {
 			position: absolute;
 			top: 0;
 			left: 0;
+			z-index: 99999999999999;
 
 			background-color: #333333;
 			padding: 0 20px 10px;
@@ -174,7 +95,7 @@
 		.popup {
 			position:absolute;
 			width:125px;
-			min-height: 115px;
+			height: 115px;
 			z-index: 9999999;
 			background: url('bin/sprechblase.png') no-repeat;
 			background-size: 125px;
@@ -201,9 +122,24 @@
 			top: 10%;
 			width: 75%;
 			height: 75%;
-			z-index: 99999;
+			z-index: 999999999;
 			padding: 1em;
 		}
+		.store-popup {
+			background-color: rgba(0, 0, 0, 0.9);
+			box-shadow: 0 0 5px 1px white;
+		}
+		.store-popup table td {
+			text-align: center;
+		}
+		.store-popup  #hardware-table {
+			float:left;
+			width: 33%;
+		}
+		.store-popup #software-table {
+			float:right;
+			width: 33%;
+		}		
 		.question-popup {
 			background-color: rgba(0, 0, 0, 0.9);
 			box-shadow: 0 0 5px 1px white;
@@ -250,18 +186,6 @@
 	<script type="text/javascript" src="src/main.js"></script>
 </head>
 <body>
-<div id="game-container">
-	<div class="store">
-		<h2 style="text-align:center">store</h2>
-		<div class="content">
-			<a href="#" data-for=".hardware">Hardware</a>
-			<a href="#" data-for=".software">Software</a>
-			<ul class="software items">
-			</ul>
-			<ul class="hardware items">
-			</ul>
-		</div>
-	</div>
-</div>
+<div id="game-container"></div>
 </body>
 </html>
