@@ -98,6 +98,8 @@ $(function() {
 			]
 		};
 
+		stats.info.value = 500000000;
+
 		// current level of upgrades per ware
 		var levels = {
 			"script": 		0
