@@ -581,6 +581,7 @@ $(function() {
 
 			if (hasDiscoveredAll(unixKeywords)) achvs.trigger('unix');
 			if (hasDiscoveredAll(sqlKeywords)) achvs.trigger('sql');
+			if (keywords.length == discoveredWords.length) achvs.trigger('keymax');
 		};
 
 		document.onkeyup = function() {

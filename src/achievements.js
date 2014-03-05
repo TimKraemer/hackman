@@ -21,7 +21,7 @@
 			'riddler': {title: 'Riddler', text: 'Or should that be Googler?', needed: 9},
 			'unix': {title: 'Unix beard', text: 'You deserve it'},
 			'sql': {title: 'All our database...', text: '...are belong to you'},
-			'i': {secret: true},
+			'keymax': {title: 'Special monkey', text: 'Or special typewriter?'},
 			'e1': {secret: true},
 			'e2': {secret: true},
 			'e3': {secret: true},
