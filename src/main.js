@@ -33,8 +33,8 @@ $(function() {
 		$soundControl = $('<p>', {'class': 'sound'}),
 		$informationField = $('<p>', {text: '0', css: {'position':'absolute', 'top':'0', 'left':'0'}}),
 		$informationField2 = $('<p>', {text: '0', css: {'float': 'left', 'padding': '2px 0 0 14px'}}),
-		$informationFieldIcon = $('<div>', {css: {height: '15px', width: '30px', 'background-image': 'url("bin/infocoin.png")', 'background-size': '15px', 'background-repeat': 'no-repeat', 'margin': '0 0 0 15px', 'padding': '0 0 0 3px'}}),
-		$upgradeButton = $('<p>', {html: '<img src="bin/upgrade.png" width="30px">', css: {'float':'right'}}),
+		$informationFieldIcon = $('<div>', {css: {height: '15px', width: '30px', 'background-image': 'url("bin/infocoin.png")', 'background-size': '1em', 'background-repeat': 'no-repeat', 'margin': '1em 0 0 2.5em', 'padding': '0 0 0 0.3em'}}),
+		$upgradeButton = $('<p>', {html: '<img src="bin/upgrade.png" width="30px" /><br/><span class="small">Upgrade</span>', css: {'float':'right'}}),
 		$store = $('<div>', {'class': 'big-popup store-popup', html: ' <h2 style="text-align:center">store</h2> \
 																		<table id="hardware-table">				\
 																			<thead><tr>							\
@@ -109,7 +109,7 @@ $(function() {
 		// here are hardware items we got
 		var hardwareLib = {
 			_auge: ['bin/auge1.png','bin/auge2.png','bin/auge3.png','bin/auge4.png','bin/auge5.png','bin/auge6.png','bin/auge7.png','bin/auge8.png'], //not placeable
-			_store: ['bin/store.png'], //not placeable
+			_store: ['bin/store.png', 'bin/store2.png'], //not placeable
 			_news: ['bin/idaily.png'], //not placeable
 			_hackman: ['bin/Hackbuddy.png'], //not placeable
 			_lamp: ['bin/lampe.png'], //not placeable
@@ -145,7 +145,7 @@ $(function() {
 			{ type: 'vpn', level: 0, pos: [550,380] },
 			{ type: '_auge', level: 0, pos: [570,-470] },
 			{ type: '_store', level: 0, pos: [-380,-70], id: 'store' },
-			{ type: '_store', level: 0, pos: [-380,-70], id: 'store2' },
+			{ type: '_store', level: 1, pos: [-380,-70], id: 'store2' },
 			{ type: '_news', level: 0, pos: [-380,-470] }
 			//{ type: 'vpn', level: 4, pos: [-1000,450] }
 		];
@@ -220,7 +220,6 @@ $(function() {
 					var gain = costs[obj][type] * levels[obj];
 
 					if (!gain) return;
-					if (['ram', 'cpu', 'bw'].indexOf(type) == -1) stats[type].value += gain;
 					else stats[type].value -= gain;
 				});
 
@@ -345,7 +344,8 @@ $(function() {
 						placeHardware('_store');
 						break;
 					}
-					case 'store': {
+					case 'store':
+					case 'store2': {
 						$hw.click(function() {
 							$container.find(".popup").remove();
 							$container.append($store);
@@ -415,12 +415,12 @@ $(function() {
 					case 'start-display' : {
 						hw.append($informationField);
 						//dirty workaround to position the popup of the start-display to position of the hackman popup
-						top = $('#hackman').position()['top']-115/1.7;
+						top = $('#hackman').position()['top']-$('#hackman').height();
 						left = $('#hackman').position()['left']+$('#hackman').width()/1.3;
 						break;
 					}
 					default : {
-						top = hw.position()['top']-115/1.7;
+						top = hw.position()['top']-hw.height()*(225/hw.height())+hw.height()/2;
 						left = hw.position()['left']+hw.width()/1.3;
 						break;
 					}

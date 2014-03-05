@@ -27,12 +27,16 @@
 		}
 
 		.sound {
-			position: absolute;
-			left: 20px;
-			bottom: 40px;
+			position: relative;
+			left: 3em;
+			top: 1em;
 			width: 22px;
 			height: 15px;
 			background: url(bin/glyphicons_182_mute.png) no-repeat left top;
+		}
+
+		.small {
+			font-size: 0.6em;
 		}
 
 		.muted {
@@ -94,17 +98,17 @@
 
 		.popup {
 			position:absolute;
-			width:125px;
-			height: 115px;
+			width:250px;
+			height: 225px;
 			z-index: 9999999;
 			background: url('bin/sprechblase.png') no-repeat;
-			background-size: 125px;
+			background-size: 250px;
 			background-position: bottom;
 		}
 		.popup p {
 			margin:0;
-			padding: 1em 0.8em 0 2.2em;
-			font-size: 0.5em;
+			padding: 1em 1.5em 0 3em;
+			font-size: 0.9em;
 		}
 
 		.display0 p{
@@ -124,13 +128,11 @@
 			height: 75%;
 			z-index: 999999999;
 			padding: 1em;
+			text-align:center;
 		}
 		.store-popup {
 			background-color: rgba(0, 0, 0, 0.9);
 			box-shadow: 0 0 5px 1px white;
-		}
-		.store-popup table td {
-			text-align: center;
 		}
 		.store-popup  #hardware-table {
 			float:left;

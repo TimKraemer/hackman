@@ -61,7 +61,7 @@
 									$el.remove();
 									deferred.resolve(isCorrect);
 								});
-							}, 3000);
+							}, 1000);
 						});
 					$answers.append($answer);
 				})();
