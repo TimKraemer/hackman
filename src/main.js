@@ -399,6 +399,7 @@ $(function() {
 					function upgradequiz() {
 						quizzes.showRandom().then(function(isCorrect) {
 							if(isCorrect) {
+								achvs.progress('riddler', 1);
 								placeHardware('display');
 								achvs.trigger('store');
 							}
@@ -535,6 +536,7 @@ $(function() {
 			keyAlreadyDown = true;
 
 			achvs.progress('type', 1);
+			achvs.progress('typemax', 1);
 
 			stats.info.value += value;
 			$informationField.text(Math.round(stats.info.value));
