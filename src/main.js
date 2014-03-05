@@ -38,16 +38,18 @@ $(function() {
 																		<table id="hardware-table">				\
 																			<thead><tr>							\
 																				<th>Hardware</th>				\
-																				<th>Kosten</th>					\
+																				<th>Cost</th>					\
 																			</tr></thead>						\
 																		</table>								\
 																		<table id="software-table">				\
 																			<thead><tr>							\
 																				<th>Software</th>				\
-																				<th>Level</th>					\
+																				<th>Level/Cost</th>					\
 																			</tr></thead>						\
 																		</table>'}),
 		muted = false,
+		$upgradeButton = $('<img>', {src: 'bin/upgrade.png', css: {'width':"30px"}});
+		$upgradeCaption = $('<span>', {'class': 'small', text: 'Upgrade'});		
 		achvs = new Achievements(),
 		quizzes = new Quizzes();
 
@@ -82,11 +84,35 @@ $(function() {
 			,"bruteforce": 	{base: 3000, 	ips: 10.0,	aware: 3 	}
 			,"keylog": 		{base: 10000, 	ips: 40.0,	aware: 10 	}
 			,"botnet": 		{base: 40000, 	ips: 100.0,	aware: 40 	}
-			,"neuronet": 	{base: 200000,	ips: 400.0,	aware: 200 	},
-			'display': [
+			,"neuronet": 	{base: 200000,	ips: 400.0,	aware: 200 	}
+			,'display': [
 							{base: 0,		ips: 0,		aware: 0	},
 							{base: 500,		ips: 1,		aware: 0	},
 							{base: 1000,	ips: 5,		aware: 10	},
+							{base: 5000,	ips: 10,	aware: 20	}
+			]
+			,'server': [
+							{base: 0,		ips: 0,		aware: 0	},
+							{base: 500,		ips: 1,		aware: 0	},
+							{base: 1000,	ips: 5,		aware: 10	},
+							{base: 5000,	ips: 10,	aware: 20	},
+							{base: 5000,	ips: 10,	aware: 20	},
+							{base: 5000,	ips: 10,	aware: 20	},
+							{base: 5000,	ips: 10,	aware: 20	},
+							{base: 5000,	ips: 10,	aware: 20	}
+			]
+			,'router': [
+							{base: 0,		ips: 0,		aware: 0	},
+							{base: 500,		ips: 1,		aware: 0	},
+							{base: 1000,	ips: 5,		aware: 10	},
+							{base: 5000,	ips: 10,	aware: 20	},
+							{base: 5000,	ips: 10,	aware: 20	}
+			]
+			,'vpn': [
+							{base: 0,		ips: 0,		aware: 0	},
+							{base: 500,		ips: 1,		aware: 0	},
+							{base: 1000,	ips: 5,		aware: 10	},
+							{base: 5000,	ips: 10,	aware: 20	},
 							{base: 5000,	ips: 10,	aware: 20	}
 			]
 		};
@@ -127,7 +153,7 @@ $(function() {
 			{ type: '_hackman', level: 0, pos: [0,100], z: 99999, id: 'hackman' },
 			{ type: 'display', level: 0, pos: [0,-70], id: 'start-display' },
 			{ type: 'display', level: 2, pos: [-380,-70], id: 'store-display' },
-			{ type: 'display', level: 2, pos: [380,-70], },
+			{ type: 'display', level: 2, pos: [380,-70], id: 'awareness-display' },
 			{ type: 'display', level: 2, pos: [-190,-270] },
 			{ type: 'display', level: 2, pos: [190,-270] },
 			{ type: 'display', level: 2, pos: [-570,-270] },
@@ -141,7 +167,7 @@ $(function() {
 			{ type: 'pc_right', level: 0, pos: [850,110], z:1 },
 			{ type: 'router', level: 0, pos: [-800,450] },
 			{ type: 'vpn', level: 0, pos: [550,380] },
-			{ type: '_auge', level: 0, pos: [570,-470] },
+			{ type: '_auge', level: 0, pos: [380,-70], id: 'aware' },
 			{ type: '_store', level: 0, pos: [-380,-70], id: 'store' },
 			{ type: '_store', level: 1, pos: [-380,-70], id: 'store2' },
 			{ type: '_news', level: 0, pos: [-380,-470] }
@@ -156,7 +182,9 @@ $(function() {
 		var infos = [
 			{ item: 'hackman', content: '', mouseover: '<p>This is you &lsquo; The Hackman &rsquo;</p>'},
 			{ item: 'start-display', content: '', mouseover: ''},
-			{ item: 'store-display', content: '', mouseover: '<p>This is the store, klick on it to buy all the things!!1</p>'}
+			{ item: 'store-display', content: '', mouseover: '<p>This is the store, klick on it to buy all the things!!1</p>'},
+			{ item: 'server', content: '', mouseover: '<p>Server</p>'},
+			{ item: 'awareness-display', content: '', mouseover: '<p>We are watching you!</p>'}
 		]
 
 		function gameLoop() {
@@ -339,11 +367,16 @@ $(function() {
 
 				$hw.mouseenter(function () { showInfos($(this),true); });
 				
+				//exceptions for display-overlay placing and onclick functions
 				switch (placedHardware[i]['id']) {
 					case 'store-display': {
 						placeHardware('_store');
 						break;
 					}
+					case 'awareness-display': {
+						placeHardware('_auge');
+						break;
+					}					
 					case 'store':
 					case 'store2':
 						$hw.click(function() {
@@ -386,7 +419,7 @@ $(function() {
 
 			if(tempHw['level']+1 < hardwareLib[tempHw['type']].length) {
 				tempHw['level']++;
-				if (tempHw['level']+1 >= hardwareLib[tempHw['type']].length) $upgradeButton.hide();
+				//if (tempHw['level']+1 >= hardwareLib[tempHw['type']].length) $upgradeButton.hide();
 				hw.remove();
 				//$container.find(".popup").remove();
 				$container.find("[data-id='noise-" + hw.data('id') +"']").remove();
@@ -412,10 +445,12 @@ $(function() {
 
 		function showInfos(hw,popup) {
 			if(typeof popup === 'undefined') { popup = false; } //js hat keine echten optionalen parameter?!
+			// exceptions for popups of display-verlays
 			switch(hw[0].id) {
 				case 'store' : case 'store2' :	{var result = infos.filter(function (infos) { return infos.item == 'store-display' });break;}
 				case 'start-display' : 			{var result = infos.filter(function (infos) { return infos.item == 'hackman' });break;}
-				default: 						{var result = infos.filter(function (infos) { return infos.item == hw[0].id });break;}
+				case 'aware' :					{var result = infos.filter(function (infos) { return infos.item == 'awareness-display' });break;}
+				default: 						{var result = infos.filter(function (infos) { return (infos.item == hw[0].id || infos.item == hw.data('type')  )});break;}
 			}
 			if(result.length > 0) {
 				hw.html(result[0].content);
@@ -447,23 +482,23 @@ $(function() {
 						'data-id': 'popup-'+hw.data('id')
 					});
 
-					var $upgradecosts = $('<p>', {html: '<span class="small" id="u_'+hw.data('id')+'">0</small><br/>', css: {'float':'right', 'text-align':'center', 'margin':'0'}});
-					var $upgradeButton = $('<img>', {src: 'bin/upgrade.png', css: {'width':"30px"}});
-					var $upgradeCaption = $('<span>', {'class': 'small', text: 'Upgrade'});
+					$upgradecosts = $('<p>', {html: '<span class="small" id="u_'+hw.data('id')+'">0</small><br/>', css: {'float':'right', 'text-align':'center', 'margin':'0'}});
 					$upgradecosts.append([$upgradeButton,'<br/>',$upgradeCaption]);
 					$popup.append($upgradecosts);
+					//exceptions for display-verlay upgrades
 					switch(hw[0].id) {
 						case 'start-display' :
 						case 'hackman' :
 							$popup.append($informationFieldIcon);
-							
-
 							$upgradeButton.click(function() { upgradeHardware($('#start-display')) });	//FIXME: references start-display, which may not have been loaded yet
 							$popup.append($soundControl);
 							break;
 						case 'store' :
 							$upgradeButton.click(function() { upgradeHardware($('#store-display')) });	//FIXME: references start-display, which may not have been loaded yet
 							break;
+						case 'aware' :
+							$upgradeButton.click(function() { upgradeHardware($('#awareness-display')) });	//FIXME: references awareness-display, which may not have been loaded yet
+							break;							
 						default :
 							$upgradeButton.click(function() { upgradeHardware(hw) });
 							break;
