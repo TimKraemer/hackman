@@ -21,7 +21,7 @@ $(function() {
 			},
 			ips: {
 				label: 'i/Sec',
-				value: 0
+				value: 1
 			},
 			aware: {
 				label: 'Awareness',
@@ -77,7 +77,7 @@ $(function() {
 		var tick = 1000; //updates every $tick milliseconds
 
 		//Software Kosten
-		var s_costs = {
+		var costs = {
 			"script": 		{base: 15, 		ips: 0.1,	aware: 0 	}
 			,"program": 	{base: 100, 	ips: 0.5,	aware: 0 	}
 			,"software": 	{base: 500, 	ips: 4.0,	aware: 0 	}
@@ -85,16 +85,14 @@ $(function() {
 			,"keylog": 		{base: 10000, 	ips: 40.0,	aware: 10 	}
 			,"botnet": 		{base: 40000, 	ips: 100.0,	aware: 40 	}
 			,"neuronet": 	{base: 200000,	ips: 400.0,	aware: 200 	}
-		}
-		var h_costs = {
-			'display': [
+			,'display': [
 							{base: 0,		ips: 0,		aware: 0	},
 							{base: 500,		ips: 1,		aware: 0	},
 							{base: 1000,	ips: 5,		aware: 10	},
 							{base: 5000,	ips: 10,	aware: 20	}
 			]
 			,'server': [
-							{base: 500,		ips: 0,		aware: 0	},
+							{base: 0,		ips: 0,		aware: 0	},
 							{base: 500,		ips: 1,		aware: 0	},
 							{base: 1000,	ips: 5,		aware: 10	},
 							{base: 5000,	ips: 10,	aware: 20	},
@@ -104,24 +102,21 @@ $(function() {
 							{base: 5000,	ips: 10,	aware: 20	}
 			]
 			,'router': [
-							{base: 500,		ips: 0,		aware: 0	},
+							{base: 0,		ips: 0,		aware: 0	},
 							{base: 500,		ips: 1,		aware: 0	},
 							{base: 1000,	ips: 5,		aware: 10	},
 							{base: 5000,	ips: 10,	aware: 20	},
 							{base: 5000,	ips: 10,	aware: 20	}
 			]
 			,'vpn': [
-							{base: 500,		ips: 0,		aware: 0	},
+							{base: 0,		ips: 0,		aware: 0	},
 							{base: 500,		ips: 1,		aware: 0	},
 							{base: 1000,	ips: 5,		aware: 10	},
 							{base: 5000,	ips: 10,	aware: 20	},
 							{base: 5000,	ips: 10,	aware: 20	}
 			]
-			,'pc': [
-							{base: 200,		ips: 0,		aware: 0	}
-			]		
 		};
-		stats.info.value += 50000;
+		//stats.info.value += 50000;
 
 		// current level of upgrades per ware
 		var levels = {
@@ -132,7 +127,8 @@ $(function() {
 			,"keylog": 		0
 			,"botnet": 		0
 			,"neuronet": 	0
-		}
+			,'display':		0
+		};
 
 		// here are hardware items we got
 		var hardwareLib = {
@@ -189,7 +185,6 @@ $(function() {
 			{ item: 'server', content: '', mouseover: '<p>Server</p>'},
 			{ item: 'vpn', content: '', mouseover: '<p>VPN</p>'},
 			{ item: 'router', content: '', mouseover: '<p>Router</p>'},
-			{ item: 'achievement-display', content: '', mouseover: '<p>This are your current Achievements! Go for it!</p>'},
 			{ item: 'awareness-display', content: '', mouseover: '<p>We are watching you!</p>'}
 		]
 
@@ -197,49 +192,18 @@ $(function() {
 			// verloren?
 			if(stats.aware >= 100) lost();
 
-			// jeden Tick neuberechnen (reset auf 0)
-			stats.ips.value = 0;
-			stats.aware.value = 0;
-			/*
-			for (var key in levels) { //für alle einträge in levels
+			for (var key in levels) {
 				var value = levels[key],
-					typeCost = costs[key]; //schau dir die kosten an
+					typeCost = costs[key];
 
-				if (!$.isArray(typeCost)) typeCost = [typeCost];  //dafuq?
+				if (!$.isArray(typeCost)) typeCost = [typeCost];
 				for (var i = 0; i < typeCost.length; i++) {
-					var cost = typeCost[i]
+					var cost = typeCost[i];
 					stats.info.value += (value*cost.ips)/(1000/tick);
 					stats.ips.value += value*cost.ips;
 					stats.aware.value += value*cost.aware;
 				}
 			}
-			console.log('value: '+stats.info.value+' i/S: '+stats.ips.value+' Aware: '+stats.aware.value);
-			*/
-
-			//Software
-			for (var type in levels) { //für alle einträge in levels
-				//console.log(type);
-				var level = levels[type];
-				var ips = s_costs[type].ips;
-				var aware = s_costs[type].aware;
-				//console.log((level*ips)/(1000/tick));
-				stats.ips.value += (level*ips);
-				stats.info.value += (level*ips)/(1000/tick);
-				stats.aware.value += (level*aware)/(1000/tick);
-			}
-
-			//Hardware
-			for (var hw in placedHardware ) { // für jede eingetragene Hardware
-				if (!placedHardware.hasOwnProperty(hw)) continue;
-				if(placedHardware[hw].type != '_hackman') {
-					console.log(placedHardware[hw].level); // FIXME!!! warum ist das undefined?
-					//console.log(h_costs[placedHardware[hw].type][placedHardware[hw].level].ips);
-					stats.ips.value += h_costs[placedHardware[hw].type][placedHardware[hw].level].ips;
-					stats.info.value += h_costs[placedHardware[hw].type][placedHardware[hw].level].ips/(1000/tick);
-					stats.aware.value += h_costs[placedHardware[hw].type][placedHardware[hw].level].aware/(1000/tick);
-				}
-			}
-			console.log('value: '+stats.info.value+' i/S: '+stats.ips.value+' Aware: '+stats.aware.value);
 
 			//GUI updaten
 			updateGUI();
@@ -251,7 +215,7 @@ $(function() {
 
 		function updateGUI() {
 			//information counter
-			$informationField.text(Math.floor(stats.info.value));
+			$informationField.text(Math.round(stats.info.value));
 			$informationField2.text($informationField.text());
 
 			//enable/disable upgrades
@@ -259,7 +223,7 @@ $(function() {
 		}
 
 		function toggleUpgrade() {
-			Object.keys(s_costs).forEach(function(type) {
+			Object.keys(costs).forEach(function(type) {
 				var cost = upgradeCost(type),
 					isBuyable = stats.info.value >= cost,
 					$el = $('#'+type);
@@ -270,7 +234,7 @@ $(function() {
 		}
 
 		function upgradeCost(obj) {
-			return Math.ceil(s_costs[obj].base*(Math.pow(magic,levels[obj])));
+			return Math.ceil(costs[obj].base*(Math.pow(magic,levels[obj])));
 		}
 
 		function upgrade(obj) {
@@ -280,7 +244,7 @@ $(function() {
 				stats.info.value -= cost;
 
 				Object.keys(stats).forEach(function(type) {
-					var gain = s_costs[obj][type] * levels[obj];
+					var gain = costs[obj][type] * levels[obj];
 
 					if (!gain) return;
 					else stats[type].value -= gain;
@@ -332,21 +296,21 @@ $(function() {
 
 		function showHardware(i) {
 			var scale = window.innerHeight/1550;
-			var h_mid = window.innerWidth/2; 
+			var h_mid = window.innerWidth/2;
 			var v_mid = window.innerHeight/2;
 			var zindex = 0;
 			var img = new Image();
 			img.src = hardwareLib[placedHardware[i]['type']][placedHardware[i]['level']];
 			img.onload = function() { //falls unser Spiel mal Arsch langsam wird, hier kann man was optimieren
-				
+
 				if(placedHardware[i]['z'] !== 'undefined') zindex = placedHardware[i]['z'];
 				//else if(['display', '_lamp-noise'].indexOf(placedHardware[i]['type']) != -1 ) zindex = currentLayer+=2;
 				else zindex = currentLayer++;
-				
+
 				// if(placedHardware[i]['type'] == '_lamp' ) {
 				// 	var $noise = $('<img>', {
 				// 		src: hardwareLib['_lamp_noise'][0],
-				// 		css: {	
+				// 		css: {
 				// 			width: 48*scale+ 'px',
 				// 			position: 'absolute',
 				// 			left: h_mid+placedHardware[i]['pos'][0]*scale-74*scale+img.width*scale/2 + 'px',
@@ -362,7 +326,7 @@ $(function() {
 				if(['display'].indexOf(placedHardware[i]['type']) != -1 ) {
 					var $noise = $('<img>', {
 						src: hardwareLib['_noise'][rand(0,3)],
-						css: {	
+						css: {
 							width: img.width*scale+ 'px',
 							position: 'absolute',
 							left: h_mid+placedHardware[i]['pos'][0]*scale-img.width*scale/2 + 'px',
@@ -407,7 +371,7 @@ $(function() {
 				//popups
 
 				$hw.mouseenter(function () { showInfos($(this),true); });
-				
+
 				//exceptions for display-overlay placing and onclick functions
 				switch (placedHardware[i]['id']) {
 					case 'store-display': {
@@ -421,13 +385,13 @@ $(function() {
 						var $newDisplay = placeHardware('_achievement');
 						if(!$newDisplay) upgradeHardware($('#achievement'),true);
 						break;
-					}					
+					}
 					case 'awareness-display': {
 						//wenn der Overlay bereits platziert ist, sorge dafür, dass er nach dem upgrade bestehend bleibt
 						var $newDisplay = placeHardware('_auge');
 						if(!$newDisplay) updateAwareness();
 						break;
-					}					
+					}
 					case 'store':
 						$hw.click(function() {
 							$container.find(".popup").remove();
@@ -478,7 +442,7 @@ $(function() {
 			    case (x < 63):	placedHardware[$('#aware').data('id')]['level'] = 4; break;
 			    case (x < 75):	placedHardware[$('#aware').data('id')]['level'] = 5; break;
 			    case (x < 88):	placedHardware[$('#aware').data('id')]['level'] = 6; break;
-			    case (x > 100):	placedHardware[$('#aware').data('id')]['level'] = 7; break;	        
+			    case (x > 100):	placedHardware[$('#aware').data('id')]['level'] = 7; break;
 			    default:
 			        break;
 			}
@@ -488,16 +452,16 @@ $(function() {
 
 		function upgradeHardware(hw,free) {
 			if(typeof free === 'undefined') { free = false; } //js hat keine echten optionalen parameter?!
-			//console.log(hw);
+			console.log(hw);
 			if(!free) {
-				var cost = h_costs[hw.data('type')][hw.data('level')];
+				var cost = costs[hw.data('type')][hw.data('level')];
 				//console.log('type: '+hw.data('type')+'id: '+hw.data('id'));
 				if (cost.base > stats.info.value) return;
 
-				stats.info.value -= cost.base;				
+				stats.info.value -= cost.base;
 			}
 
-			//levels[hw.data('type')]++;
+			levels[hw.data('type')]++;
 
 			var tempHw = placedHardware[hw.data('id')];
 
@@ -511,7 +475,7 @@ $(function() {
 
 				//when start-display reached level 4 give us an additional display
 				if(hw[0]['id'] == 'start-display' && tempHw['level'] == 3) {
-					
+
 					function upgradequiz() {
 						$container.find(".popup").remove();
 						quizzes.showRandom().then(function(isCorrect) {
@@ -521,7 +485,7 @@ $(function() {
 								achvs.trigger('store');
 							}
 							else upgradequiz();
-						});						
+						});
 					}
 					upgradequiz();
 				}
@@ -541,7 +505,7 @@ $(function() {
 			}
 			if(result.length > 0) {
 				hw.html(result[0].content);
-				
+
 				var top = 0, left = 0;
 				switch(hw[0].id) {
 					case 'start-display' : {
@@ -569,30 +533,36 @@ $(function() {
 						'data-id': 'popup-'+hw.data('id')
 					});
 
-					$upgradecosts = $('<p>', {html: '<span class="small" id="u_'+hw.data('id')+'">0</small><br/>', css: {'float':'right', 'text-align':'center', 'margin':'0'}});
+					var $upgradecosts = $('<p>', {html: '<span class="cost small" id="u_'+hw.data('id')+'">0</span><br/>', css: {'float':'right', 'text-align':'center', 'margin':'0'}});
 					$upgradecosts.append([$upgradeButton,'<br/>',$upgradeCaption]);
 					$popup.append($upgradecosts);
 					//exceptions for display-verlay upgrades
-					switch(hw[0].id) {
-						case 'start-display' :
-						case 'hackman' :
-							$popup.append($informationFieldIcon);
-							$upgradeButton.click(function() { upgradeHardware($('#start-display')) });	//FIXME: references start-display, which may not have been loaded yet
-							$popup.append($soundControl);
-							break;
-						case 'store' :
-							$upgradeButton.click(function() { upgradeHardware($('#store-display')) });	//FIXME: references start-display, which may not have been loaded yet
-							break;
-						case 'aware' :
-							$upgradeButton.click(function() { upgradeHardware($('#awareness-display')) });	//FIXME: references awareness-display, which may not have been loaded yet
-							break;
-						case 'achievement' :
-							$upgradeButton.click(function() { upgradeHardware($('#achievement-display')) });	//FIXME: references awareness-display, which may not have been loaded yet
-							break;
-						default :
-							$upgradeButton.click(function() { upgradeHardware(hw) });
-							break;
-					}
+					$upgradeButton.click(function() {
+						var id = '';
+						switch(hw[0].id) {
+							case 'start-display' :
+							case 'hackman' :
+								$popup.append($informationFieldIcon);
+								$popup.append($soundControl);
+								id = 'start-display';
+								break;
+							case 'store' :
+								id = 'store-display';
+								break;
+							case 'aware' :
+								id = 'awareness-display';
+								break;
+							case 'achievement' :
+								id = 'achievement-display';
+								break;
+							default :
+								$upgradeButton.click(function() { upgradeHardware(hw) });
+								return;
+						}
+						var $hw = $('#'+id);
+						upgradeHardware($hw);
+						$('#u_'+$hw.data('id')).text(costs[$hw.data('type')][$hw.data('level')].base);
+					});
 
 					$container.find(".popup").remove();
 					$container.append($popup);
