@@ -121,7 +121,7 @@ $(function() {
 							{base: 200,		ips: 0,		aware: 0	}
 			]		
 		};
-		//stats.info.value += 50000;
+		stats.info.value += 50000;
 
 		// current level of upgrades per ware
 		var levels = {
@@ -189,6 +189,7 @@ $(function() {
 			{ item: 'server', content: '', mouseover: '<p>Server</p>'},
 			{ item: 'vpn', content: '', mouseover: '<p>VPN</p>'},
 			{ item: 'router', content: '', mouseover: '<p>Router</p>'},
+			{ item: 'achievement-display', content: '', mouseover: '<p>This are your current Achievements! Go for it!</p>'},
 			{ item: 'awareness-display', content: '', mouseover: '<p>We are watching you!</p>'}
 		]
 
