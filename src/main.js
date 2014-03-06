@@ -116,7 +116,7 @@ $(function() {
 							{base: 5000,	ips: 10,	aware: 20	}
 			]
 		};
-		stats.info.value += 50000;
+		//stats.info.value += 50000;
 
 		// current level of upgrades per ware
 		var levels = {
