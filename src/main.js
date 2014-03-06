@@ -229,8 +229,8 @@ $(function() {
 			}
 
 			//Hardware
-			/*
 			for (var hw in placedHardware ) { // für jede eingetragene Hardware
+				if (!placedHardware.hasOwnProperty(hw)) continue;
 				if(placedHardware[hw].type != '_hackman') {
 					console.log(placedHardware[hw].level); // FIXME!!! warum ist das undefined?
 					//console.log(h_costs[placedHardware[hw].type][placedHardware[hw].level].ips);
@@ -239,7 +239,6 @@ $(function() {
 					stats.aware.value += h_costs[placedHardware[hw].type][placedHardware[hw].level].aware/(1000/tick);
 				}
 			}
-			*/
 			console.log('value: '+stats.info.value+' i/S: '+stats.ips.value+' Aware: '+stats.aware.value);
 
 			//GUI updaten
