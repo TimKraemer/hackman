@@ -21,7 +21,7 @@
 			'riddler': {title: 'Riddler', text: 'Or should that be Googler?', needed: 9},
 			'unix': {title: 'Unix beard', text: 'You deserve it'},
 			'sql': {title: 'All our database...', text: '...are belong to you'},
-			'keymax': {title: 'Special monkey', text: 'Or special typewriter?'},
+			'keymax': {title: 'Special monkey', text: 'Somehow you got all the keywords'},
 			'e1': {secret: true},
 			'e2': {secret: true},
 			'e3': {secret: true},
@@ -129,16 +129,16 @@
 				i++;
 			}
 
-			$container.on('mouseenter', 'img', function(e) {
+			$container.on('mousemove', 'img', function(e) {
 				var $img = $(e.target),
 					achv = self.list[$img.data('id')];
 				if (achv.secret) return;
 				$hoverInfo
 					.show()
 					.css({
-						position: 'absolute',
-						left: e.pageX,
-						top: e.pageY,
+						position: 'fixed',
+						left: String(e.clientX + 20) + 'px',
+						top: String(e.clientY + 20) + 'px',
 						zIndex: 9999999999
 					})
 					.find('h4').text(achv.title).end()

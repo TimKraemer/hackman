@@ -48,11 +48,12 @@ $(function() {
 																			</tr></thead>						\
 																		</table>'}),
 		muted = false,
-		$upgradeButton = $('<img>', {src: 'bin/upgrade.png', css: {'width':"30px"}});
-		$upgradeCaption = $('<span>', {'class': 'small', text: 'Upgrade'});		
+		$upgradeButton = $('<img>', {src: 'bin/upgrade.png', css: {'width':"30px"}}),
+		$upgradeCaption = $('<span>', {'class': 'small', text: 'Upgrade'}),
 		achvs = new Achievements(),
 		quizzes = new Quizzes();
 
+	stats.info.value += 50000;
 	$informationFieldIcon.append($informationField2);
 	$soundControl.click(function() {
 		if (myAudio.paused) {
@@ -624,6 +625,12 @@ $(function() {
 			if (keyword) {
 				typedStack = [];
 				value = keyword.length * (discoveredWords.indexOf(keyword) == -1 ? 10 : 5);
+
+				if (discoveredWords.indexOf(keyword) == -1) discoveredWords.push(keyword);
+
+				if (hasDiscoveredAll(unixKeywords)) achvs.trigger('unix');
+				if (hasDiscoveredAll(sqlKeywords)) achvs.trigger('sql');
+				if (keywords.length == discoveredWords.length) achvs.trigger('keymax');
 			}
 
 			if (keyAlreadyDown && !keyword) return;
@@ -638,7 +645,9 @@ $(function() {
 			var offset = $('#hackman').position(),
 				text = '+' + String(value);
 
-			if (keyword) text += ' - ' + keyword;
+			if (keyword) {
+				text += ' - ' + keyword;
+			}
 
 			var $popup = $('<span>', {
 				text: text,
@@ -668,12 +677,6 @@ $(function() {
 					});
 				});
 			}, 50);
-
-			discoveredWords.push(keyword);
-
-			if (hasDiscoveredAll(unixKeywords)) achvs.trigger('unix');
-			if (hasDiscoveredAll(sqlKeywords)) achvs.trigger('sql');
-			if (keywords.length == discoveredWords.length) achvs.trigger('keymax');
 		};
 
 		document.onkeyup = function() {
