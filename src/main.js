@@ -21,7 +21,7 @@ $(function() {
 			},
 			ips: {
 				label: 'i/Sec',
-				value: 1
+				value: 0
 			},
 			aware: {
 				label: 'Awareness',
@@ -77,7 +77,7 @@ $(function() {
 		var tick = 1000; //updates every $tick milliseconds
 
 		//Software Kosten
-		var costs = {
+		var s_costs = {
 			"script": 		{base: 15, 		ips: 0.1,	aware: 0 	}
 			,"program": 	{base: 100, 	ips: 0.5,	aware: 0 	}
 			,"software": 	{base: 500, 	ips: 4.0,	aware: 0 	}
@@ -85,14 +85,16 @@ $(function() {
 			,"keylog": 		{base: 10000, 	ips: 40.0,	aware: 10 	}
 			,"botnet": 		{base: 40000, 	ips: 100.0,	aware: 40 	}
 			,"neuronet": 	{base: 200000,	ips: 400.0,	aware: 200 	}
-			,'display': [
+		}
+		var h_costs = {
+			'display': [
 							{base: 0,		ips: 0,		aware: 0	},
 							{base: 500,		ips: 1,		aware: 0	},
 							{base: 1000,	ips: 5,		aware: 10	},
 							{base: 5000,	ips: 10,	aware: 20	}
 			]
 			,'server': [
-							{base: 0,		ips: 0,		aware: 0	},
+							{base: 500,		ips: 0,		aware: 0	},
 							{base: 500,		ips: 1,		aware: 0	},
 							{base: 1000,	ips: 5,		aware: 10	},
 							{base: 5000,	ips: 10,	aware: 20	},
@@ -102,19 +104,22 @@ $(function() {
 							{base: 5000,	ips: 10,	aware: 20	}
 			]
 			,'router': [
-							{base: 0,		ips: 0,		aware: 0	},
+							{base: 500,		ips: 0,		aware: 0	},
 							{base: 500,		ips: 1,		aware: 0	},
 							{base: 1000,	ips: 5,		aware: 10	},
 							{base: 5000,	ips: 10,	aware: 20	},
 							{base: 5000,	ips: 10,	aware: 20	}
 			]
 			,'vpn': [
-							{base: 0,		ips: 0,		aware: 0	},
+							{base: 500,		ips: 0,		aware: 0	},
 							{base: 500,		ips: 1,		aware: 0	},
 							{base: 1000,	ips: 5,		aware: 10	},
 							{base: 5000,	ips: 10,	aware: 20	},
 							{base: 5000,	ips: 10,	aware: 20	}
 			]
+			,'pc': [
+							{base: 200,		ips: 0,		aware: 0	}
+			]		
 		};
 		//stats.info.value += 50000;
 
@@ -127,7 +132,6 @@ $(function() {
 			,"keylog": 		0
 			,"botnet": 		0
 			,"neuronet": 	0
-			,'display':		0
 		}
 
 		// here are hardware items we got
@@ -192,18 +196,50 @@ $(function() {
 			// verloren?
 			if(stats.aware >= 100) lost();
 
-			for (var key in levels) {
+			// jeden Tick neuberechnen (reset auf 0)
+			stats.ips.value = 0;
+			stats.aware.value = 0;
+			/*
+			for (var key in levels) { //für alle einträge in levels
 				var value = levels[key],
-					typeCost = costs[key];
+					typeCost = costs[key]; //schau dir die kosten an
 
-				if (!$.isArray(typeCost)) typeCost = [typeCost];
+				if (!$.isArray(typeCost)) typeCost = [typeCost];  //dafuq?
 				for (var i = 0; i < typeCost.length; i++) {
-					var cost = typeCost[i];
+					var cost = typeCost[i]
 					stats.info.value += (value*cost.ips)/(1000/tick);
 					stats.ips.value += value*cost.ips;
 					stats.aware.value += value*cost.aware;
 				}
 			}
+			console.log('value: '+stats.info.value+' i/S: '+stats.ips.value+' Aware: '+stats.aware.value);
+			*/
+
+			//Software
+			for (var type in levels) { //für alle einträge in levels
+				//console.log(type);
+				var level = levels[type];
+				var ips = s_costs[type].ips;
+				var aware = s_costs[type].aware;
+				//console.log((level*ips)/(1000/tick));
+				stats.ips.value += (level*ips);
+				stats.info.value += (level*ips)/(1000/tick);
+				stats.aware.value += (level*aware)/(1000/tick);
+			}
+
+			//Hardware
+			/*
+			for (var hw in placedHardware ) { // für jede eingetragene Hardware
+				if(placedHardware[hw].type != '_hackman') {
+					console.log(placedHardware[hw].level); // FIXME!!! warum ist das undefined?
+					//console.log(h_costs[placedHardware[hw].type][placedHardware[hw].level].ips);
+					stats.ips.value += h_costs[placedHardware[hw].type][placedHardware[hw].level].ips;
+					stats.info.value += h_costs[placedHardware[hw].type][placedHardware[hw].level].ips/(1000/tick);
+					stats.aware.value += h_costs[placedHardware[hw].type][placedHardware[hw].level].aware/(1000/tick);
+				}
+			}
+			*/
+			console.log('value: '+stats.info.value+' i/S: '+stats.ips.value+' Aware: '+stats.aware.value);
 
 			//GUI updaten
 			updateGUI();
@@ -215,7 +251,7 @@ $(function() {
 
 		function updateGUI() {
 			//information counter
-			$informationField.text(Math.round(stats.info.value));
+			$informationField.text(Math.floor(stats.info.value));
 			$informationField2.text($informationField.text());
 
 			//enable/disable upgrades
@@ -223,7 +259,7 @@ $(function() {
 		}
 
 		function toggleUpgrade() {
-			Object.keys(costs).forEach(function(type) {
+			Object.keys(s_costs).forEach(function(type) {
 				var cost = upgradeCost(type),
 					isBuyable = stats.info.value >= cost,
 					$el = $('#'+type);
@@ -234,7 +270,7 @@ $(function() {
 		}
 
 		function upgradeCost(obj) {
-			return Math.ceil(costs[obj].base*(Math.pow(magic,levels[obj])));
+			return Math.ceil(s_costs[obj].base*(Math.pow(magic,levels[obj])));
 		}
 
 		function upgrade(obj) {
@@ -244,7 +280,7 @@ $(function() {
 				stats.info.value -= cost;
 
 				Object.keys(stats).forEach(function(type) {
-					var gain = costs[obj][type] * levels[obj];
+					var gain = s_costs[obj][type] * levels[obj];
 
 					if (!gain) return;
 					else stats[type].value -= gain;
@@ -451,16 +487,16 @@ $(function() {
 
 		function upgradeHardware(hw,free) {
 			if(typeof free === 'undefined') { free = false; } //js hat keine echten optionalen parameter?!
-			console.log(hw);
+			//console.log(hw);
 			if(!free) {
-				var cost = costs[hw.data('type')][hw.data('level')];
+				var cost = h_costs[hw.data('type')][hw.data('level')];
 				//console.log('type: '+hw.data('type')+'id: '+hw.data('id'));
 				if (cost.base > stats.info.value) return;
 
 				stats.info.value -= cost.base;				
 			}
 
-			levels[hw.data('type')]++;
+			//levels[hw.data('type')]++;
 
 			var tempHw = placedHardware[hw.data('id')];
 
