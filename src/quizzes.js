@@ -10,7 +10,7 @@
 		unanswered: [
 			{
 				question: 'What is not a danger of Cross-site scripting (XSS)?',
-				answers: ['Tampered page', 'Login theft', 'Remote code execution', 'Scary images'],
+				answers: ['Tampered page', 'Login theft', 'Server root shell', 'Scary images'],
 				correct: 2
 			},
 			{

@@ -409,6 +409,7 @@ $(function() {
 						});
 						break;
 					case 'achievement':
+						console.log($hw);
 						$hw.click(function() {
 							$container.find(".popup").remove();
 							achvs.showAll();
@@ -574,6 +575,15 @@ $(function() {
 				$container.find(".popup").remove();
 				$container.find(".big-popup").remove();
 			}
+		});
+
+		$(document).on('click', '#aware', function() {
+			quizzes.showRandom().then(function(isCorrect) {
+				if (isCorrect) {
+					achvs.progress('riddler', 1);
+					stats.aware.value = Math.max(stats.aware.value - 10, 0);
+				}
+			});
 		});
 
 		$(window).resize(function() {
