@@ -90,9 +90,9 @@ $(function() {
 		var h_costs = {
 			'display': [
 							{base: 1000,	ips: 0,		aware: 0	},
-							{base: 500,		ips: 1,		aware: 0	},
-							{base: 1000,	ips: 5,		aware: 10	},
-							{base: 5000,	ips: 10,	aware: 20	}
+							{base: 100,		ips: 1,		aware: 0	},
+							{base: 500,		ips: 5,		aware: 10	},
+							{base: 1000,	ips: 10,	aware: 20	}
 			]
 			,'server': [
 							{base: 500,		ips: 0,		aware: 0	},
@@ -125,7 +125,7 @@ $(function() {
 							{base: 200,		ips: 0,		aware: 0	}
 			]
 		};
-		stats.info.value += 50000;
+		//stats.info.value += 50000;
 
 		// current level of upgrades per ware
 		var levels = {
