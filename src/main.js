@@ -134,7 +134,7 @@ $(function() {
 		var hardwareLib = {
 			_auge: ['bin/auge1.png','bin/auge2.png','bin/auge3.png','bin/auge4.png','bin/auge5.png','bin/auge6.png','bin/auge7.png','bin/auge8.png'], //not placeable
 			_store: ['bin/store.png', 'bin/store2.png'], //not placeable
-			_news: ['bin/idaily.png'], //not placeable
+			_achievement: ['bin/achievement.png'], //not placeable
 			_hackman: ['bin/Hackbuddy.png'], //not placeable
 			_lamp: ['bin/lampe.png'], //not placeable
 			_noise: ['bin/rauschen01.gif','bin/rauschen02.gif','bin/rauschen03.gif','bin/rauschen04.gif'], //not placeable
@@ -154,7 +154,7 @@ $(function() {
 			{ type: 'display', level: 0, pos: [0,-70], id: 'start-display' },
 			{ type: 'display', level: 2, pos: [-380,-70], id: 'store-display' },
 			{ type: 'display', level: 2, pos: [380,-70], id: 'awareness-display' },
-			{ type: 'display', level: 2, pos: [-190,-270] },
+			{ type: 'display', level: 2, pos: [-190,-270], id: 'achievement-display' },
 			{ type: 'display', level: 2, pos: [190,-270] },
 			{ type: 'display', level: 2, pos: [-570,-270] },
 			{ type: 'display', level: 2, pos: [570,-270] },
@@ -169,8 +169,7 @@ $(function() {
 			{ type: 'vpn', level: 0, pos: [550,380] },
 			{ type: '_auge', level: 0, pos: [380,-70], id: 'aware' },
 			{ type: '_store', level: 0, pos: [-380,-70], id: 'store' },
-			{ type: '_store', level: 1, pos: [-380,-70], id: 'store2' },
-			{ type: '_news', level: 0, pos: [-380,-470] }
+			{ type: '_achievement', level: 0, pos: [-190,-270], id: 'achievement' }
 			//{ type: 'vpn', level: 4, pos: [-1000,450] }
 		];
 
@@ -184,6 +183,8 @@ $(function() {
 			{ item: 'start-display', content: '', mouseover: ''},
 			{ item: 'store-display', content: '', mouseover: '<p>This is the store, klick on it to buy all the things!!1</p>'},
 			{ item: 'server', content: '', mouseover: '<p>Server</p>'},
+			{ item: 'vpn', content: '', mouseover: '<p>VPN</p>'},
+			{ item: 'router', content: '', mouseover: '<p>Router</p>'},
 			{ item: 'awareness-display', content: '', mouseover: '<p>We are watching you!</p>'}
 		]
 
@@ -260,10 +261,13 @@ $(function() {
 					layout.splice(layout.indexOf(result[0]),1); //removes the resulting hardware from layout array
 					placedHardware.push(result[0]);
 					showHardware(placedHardware.length-1);
+					return true;
 				}
 				else console.log('kein platz für '+type);
+				return false;
 			}
 			else console.log('kein platz für mehr hardware');
+			return false;
 		}
 
 		function lost() {
@@ -353,6 +357,7 @@ $(function() {
 					id: placedHardware[i]['id'],
 					'class': placedHardware[i]['type']+placedHardware[i]['level'],
 					'data-id': i,
+					'data-level': placedHardware[i]['level'],
 					'data-type': placedHardware[i]['type']
 				});
 				// if(['_hackman','_lamp'].indexOf(placedHardware[i]['type']) == -1 ) {
@@ -370,15 +375,24 @@ $(function() {
 				//exceptions for display-overlay placing and onclick functions
 				switch (placedHardware[i]['id']) {
 					case 'store-display': {
-						placeHardware('_store');
+						//wenn der Overlay bereits platziert ist, upgrade ihn
+						var $newDisplay = placeHardware('_store');
+						if(!$newDisplay) upgradeHardware($('#store'),true);
 						break;
 					}
+					case 'achievement-display': {
+						//wenn der Overlay bereits platziert ist, upgrade ihn
+						var $newDisplay = placeHardware('_achievement');
+						if(!$newDisplay) upgradeHardware($('#achievement'),true);
+						break;
+					}					
 					case 'awareness-display': {
-						placeHardware('_auge');
+						//wenn der Overlay bereits platziert ist, sorge dafür, dass er nach dem upgrade bestehend bleibt
+						var $newDisplay = placeHardware('_auge');
+						if(!$newDisplay) updateAwareness();
 						break;
 					}					
 					case 'store':
-					case 'store2':
 						$hw.click(function() {
 							$container.find(".popup").remove();
 							$container.append($store);
@@ -392,6 +406,13 @@ $(function() {
 									}
 								});
 						});
+						break;
+					case 'achievement':
+						$hw.click(function() {
+							$container.find(".popup").remove();
+							achvs.showAll();
+						});
+						break;
 				}
 				$container.find(".big-popup").remove();
 				$container.append($hw);
@@ -408,11 +429,37 @@ $(function() {
 			}
 		}
 
-		function upgradeHardware(hw) {
-			var cost = costs[hw.data('type')][hw.data('id')];
-			if (cost.base > stats.info.value) return;
+		function updateAwareness() {
+			var aware_level = $('#aware').data('level');
+			var id = $('#aware').data('id');
+			var x = stats.info.aware;
+			switch (true) {
+			    case (x < 13):	placedHardware[$('#aware').data('id')]['level'] = 0; break;
+			    case (x < 26):	placedHardware[$('#aware').data('id')]['level'] = 1; break;
+			    case (x < 38):	placedHardware[$('#aware').data('id')]['level'] = 2; break;
+			    case (x < 51):	placedHardware[$('#aware').data('id')]['level'] = 3; break;
+			    case (x < 63):	placedHardware[$('#aware').data('id')]['level'] = 4; break;
+			    case (x < 75):	placedHardware[$('#aware').data('id')]['level'] = 5; break;
+			    case (x < 88):	placedHardware[$('#aware').data('id')]['level'] = 6; break;
+			    case (x > 100):	placedHardware[$('#aware').data('id')]['level'] = 7; break;	        
+			    default:
+			        break;
+			}
+			$('#aware').remove();
+			showHardware(id);
+		}
 
-			stats.info.value -= cost.base;
+		function upgradeHardware(hw,free) {
+			if(typeof free === 'undefined') { free = false; } //js hat keine echten optionalen parameter?!
+			console.log(hw);
+			if(!free) {
+				var cost = costs[hw.data('type')][hw.data('level')];
+				//console.log('type: '+hw.data('type')+'id: '+hw.data('id'));
+				if (cost.base > stats.info.value) return;
+
+				stats.info.value -= cost.base;				
+			}
+
 			levels[hw.data('type')]++;
 
 			var tempHw = placedHardware[hw.data('id')];
@@ -421,7 +468,7 @@ $(function() {
 				tempHw['level']++;
 				//if (tempHw['level']+1 >= hardwareLib[tempHw['type']].length) $upgradeButton.hide();
 				hw.remove();
-				//$container.find(".popup").remove();
+				$container.find(".popup").remove();
 				$container.find("[data-id='noise-" + hw.data('id') +"']").remove();
 				showHardware(hw.data('id'));
 
@@ -429,6 +476,7 @@ $(function() {
 				if(hw[0]['id'] == 'start-display' && tempHw['level'] == 3) {
 					
 					function upgradequiz() {
+						$container.find(".popup").remove();
 						quizzes.showRandom().then(function(isCorrect) {
 							if(isCorrect) {
 								achvs.progress('riddler', 1);
@@ -451,6 +499,7 @@ $(function() {
 				case 'store' : case 'store2' :	{var result = infos.filter(function (infos) { return infos.item == 'store-display' });break;}
 				case 'start-display' : 			{var result = infos.filter(function (infos) { return infos.item == 'hackman' });break;}
 				case 'aware' :					{var result = infos.filter(function (infos) { return infos.item == 'awareness-display' });break;}
+				case 'achievement' :			{var result = infos.filter(function (infos) { return infos.item == 'achievement-display' });break;}
 				default: 						{var result = infos.filter(function (infos) { return (infos.item == hw[0].id || infos.item == hw.data('type')  )});break;}
 			}
 			if(result.length > 0) {
@@ -499,7 +548,10 @@ $(function() {
 							break;
 						case 'aware' :
 							$upgradeButton.click(function() { upgradeHardware($('#awareness-display')) });	//FIXME: references awareness-display, which may not have been loaded yet
-							break;							
+							break;
+						case 'achievement' :
+							$upgradeButton.click(function() { upgradeHardware($('#achievement-display')) });	//FIXME: references awareness-display, which may not have been loaded yet
+							break;
 						default :
 							$upgradeButton.click(function() { upgradeHardware(hw) });
 							break;
