@@ -53,7 +53,6 @@ $(function() {
 		achvs = new Achievements(),
 		quizzes = new Quizzes();
 
-	stats.info.value += 50000;
 	$informationFieldIcon.append($informationField2);
 	$soundControl.click(function() {
 		if (myAudio.paused) {
